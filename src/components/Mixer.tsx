@@ -467,9 +467,13 @@ Rules for ALL versions:
           <span style={{ color: '#666', fontSize: 14 }}>tap ingredients to mix</span>
         ) : (
           selected.map(item => (
-            <span key={item.id} style={{ background: '#2a2a2a', borderRadius: 20, padding: '6px 12px', fontSize: 14 }}>
-              {item.emoji} {item.name}
-            </span>
+            <button
+              key={item.id}
+              onClick={() => toggleIngredient(item)}
+              style={{ background: '#2a2a2a', borderRadius: 20, padding: '6px 12px', fontSize: 14, border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+            >
+              {item.emoji} {item.name} <span style={{ color: '#666', marginLeft: 4 }}>×</span>
+            </button>
           ))
         )}
       </div>
