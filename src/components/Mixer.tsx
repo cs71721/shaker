@@ -767,7 +767,7 @@ Rules for ALL versions:
                 <div>
                   <p style={{ fontSize: selectedSize === 'long' ? 16 : 18, lineHeight: 1.5, margin: 0 }}>&quot;{currentResult}&quot;</p>
                   <p style={{ color: autoCopied ? '#4ade80' : '#666', fontSize: 12, marginTop: 12, transition: 'color 0.2s' }}>
-                    {autoCopied ? '✓ copied!' : 'tap to copy again'}
+                    {autoCopied ? '✓ copied!' : 'tap to copy'}
                   </p>
                 </div>
               )}
