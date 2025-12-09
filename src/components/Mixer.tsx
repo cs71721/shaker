@@ -14,6 +14,11 @@ const voiceDescriptions: Record<string, string> = {
   chaotic: "pure unhinged energy, random tangents, keyboard smash vibes",
   poetic: "deep and artsy, metaphors, slightly pretentious but beautiful",
   savage: "brutal honesty, no filter, mic drop energy",
+  dramatic: "everything is a BIG DEAL, theatrical, over the top reactions",
+  sleepy: "tired energy, low effort responses, wants to nap",
+  petty: "passive-aggressive, holds grudges, subtle shade",
+  unhinged: "completely unfiltered, zero impulse control, feral energy",
+  cozy: "warm and soft, comforting, like a hug in text form",
   wednesday: "Wednesday Addams - deadpan, dark humor, unbothered, morbid wit",
   peeta: "Peeta from Hunger Games - earnest, heartfelt, loyal",
   hermione: "Hermione Granger - logical, articulate, slightly know-it-all",
@@ -28,7 +33,15 @@ const voiceDescriptions: Record<string, string> = {
   batman: "Batman - brooding, intense, short declarative sentences",
   carson: "Carson the butler - formal, disapproving, proper, passive-aggressive dignity",
   dowager: "Dowager Countess Violet - sharp wit, cutting remarks, aristocratic shade",
-  mary: "Lady Mary Crawley - elegant, cold, devastatingly composed, subtle cruelty"
+  mary: "Lady Mary Crawley - elegant, cold, devastatingly composed, subtle cruelty",
+  spongebob: "SpongeBob - absurdly optimistic, enthusiastic, naive but wholesome",
+  stitch: "Stitch - chaotic destruction, broken English, surprisingly loving",
+  moana: "Moana - determined, adventurous, stubborn but kind",
+  bruno: "Bruno from Encanto - cryptic, mysterious, 'we don't talk about' vibes",
+  barbie: "Barbie - optimistic, encouraging, believes in you, pink energy",
+  ken: "Ken - himbo energy, 'I'm just Ken', earnest but clueless",
+  gru: "Gru - villain with soft heart, dramatic declarations, minion dad energy",
+  katniss: "Katniss - serious, protective, reluctant hero, blunt and guarded"
 };
 
 interface Ingredient {
@@ -50,6 +63,11 @@ const allIngredients: Ingredient[] = [
   { id: 'chaotic', emoji: '🌀', name: 'chaotic', section: 'vibes' },
   { id: 'poetic', emoji: '🪶', name: 'poetic', section: 'vibes' },
   { id: 'savage', emoji: '💅', name: 'savage', section: 'vibes' },
+  { id: 'dramatic', emoji: '🎭', name: 'dramatic', section: 'vibes' },
+  { id: 'sleepy', emoji: '😴', name: 'sleepy', section: 'vibes' },
+  { id: 'petty', emoji: '🐸', name: 'petty', section: 'vibes' },
+  { id: 'unhinged', emoji: '🤪', name: 'unhinged', section: 'vibes' },
+  { id: 'cozy', emoji: '🧸', name: 'cozy', section: 'vibes' },
   { id: 'wednesday', emoji: '🗡️', name: 'Wednesday', section: 'characters' },
   { id: 'peeta', emoji: '🍞', name: 'Peeta', section: 'characters' },
   { id: 'hermione', emoji: '📚', name: 'Hermione', section: 'characters' },
@@ -65,6 +83,14 @@ const allIngredients: Ingredient[] = [
   { id: 'carson', emoji: '🎩', name: 'Carson', section: 'characters' },
   { id: 'dowager', emoji: '👑', name: 'Dowager', section: 'characters' },
   { id: 'mary', emoji: '🥀', name: 'Lady Mary', section: 'characters' },
+  { id: 'spongebob', emoji: '🧽', name: 'SpongeBob', section: 'characters' },
+  { id: 'stitch', emoji: '👽', name: 'Stitch', section: 'characters' },
+  { id: 'moana', emoji: '🌺', name: 'Moana', section: 'characters' },
+  { id: 'bruno', emoji: '🔮', name: 'Bruno', section: 'characters' },
+  { id: 'barbie', emoji: '💖', name: 'Barbie', section: 'characters' },
+  { id: 'ken', emoji: '🩷', name: 'Ken', section: 'characters' },
+  { id: 'gru', emoji: '🦹', name: 'Gru', section: 'characters' },
+  { id: 'katniss', emoji: '🏹', name: 'Katniss', section: 'characters' },
 ];
 
 export default function Mixer() {
