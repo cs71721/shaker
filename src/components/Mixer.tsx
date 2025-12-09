@@ -127,6 +127,7 @@ interface Ingredient {
   emoji: string;
   name: string;
   section: string;
+  image?: string;
 }
 
 const allIngredients: Ingredient[] = [
@@ -146,29 +147,29 @@ const allIngredients: Ingredient[] = [
   { id: 'petty', emoji: '🐸', name: 'petty', section: 'vibes' },
   { id: 'unhinged', emoji: '🤪', name: 'unhinged', section: 'vibes' },
   { id: 'cozy', emoji: '🧸', name: 'cozy', section: 'vibes' },
-  { id: 'wednesday', emoji: '🗡️', name: 'Wednesday', section: 'characters' },
-  { id: 'peeta', emoji: '🍞', name: 'Peeta', section: 'characters' },
-  { id: 'hermione', emoji: '📚', name: 'Hermione', section: 'characters' },
-  { id: 'yoda', emoji: '💚', name: 'Yoda', section: 'characters' },
-  { id: 'deadpool', emoji: '💀', name: 'Deadpool', section: 'characters' },
-  { id: 'elsa', emoji: '❄️', name: 'Elsa', section: 'characters' },
-  { id: 'shrek', emoji: '👹', name: 'Shrek', section: 'characters' },
-  { id: 'taylor', emoji: '💜', name: 'Taylor', section: 'characters' },
-  { id: 'gandalf', emoji: '🧙', name: 'Gandalf', section: 'characters' },
-  { id: 'dracula', emoji: '🧛', name: 'Dracula', section: 'characters' },
-  { id: 'jesus', emoji: '✝️', name: 'Jesus', section: 'characters' },
-  { id: 'batman', emoji: '🦇', name: 'Batman', section: 'characters' },
+  { id: 'wednesday', emoji: '🗡️', name: 'Wednesday', section: 'characters', image: '/characters/wednesday.png' },
+  { id: 'peeta', emoji: '🍞', name: 'Peeta', section: 'characters', image: '/characters/peeta.png' },
+  { id: 'hermione', emoji: '📚', name: 'Hermione', section: 'characters', image: '/characters/hermione.png' },
+  { id: 'yoda', emoji: '💚', name: 'Yoda', section: 'characters', image: '/characters/yoda.png' },
+  { id: 'deadpool', emoji: '💀', name: 'Deadpool', section: 'characters', image: '/characters/deadpool.png' },
+  { id: 'elsa', emoji: '❄️', name: 'Elsa', section: 'characters', image: '/characters/elsa.png' },
+  { id: 'shrek', emoji: '👹', name: 'Shrek', section: 'characters', image: '/characters/shrek.png' },
+  { id: 'taylor', emoji: '💜', name: 'Taylor', section: 'characters', image: '/characters/taylor.png' },
+  { id: 'gandalf', emoji: '🧙', name: 'Gandalf', section: 'characters', image: '/characters/gandalf.png' },
+  { id: 'dracula', emoji: '🧛', name: 'Dracula', section: 'characters', image: '/characters/dracula.png' },
+  { id: 'jesus', emoji: '✝️', name: 'Jesus', section: 'characters', image: '/characters/jesus.png' },
+  { id: 'batman', emoji: '🦇', name: 'Batman', section: 'characters', image: '/characters/batman.png' },
   { id: 'carson', emoji: '🎩', name: 'Carson', section: 'characters' },
   { id: 'dowager', emoji: '👑', name: 'Dowager', section: 'characters' },
   { id: 'mary', emoji: '🥀', name: 'Lady Mary', section: 'characters' },
-  { id: 'spongebob', emoji: '🧽', name: 'SpongeBob', section: 'characters' },
-  { id: 'stitch', emoji: '👽', name: 'Stitch', section: 'characters' },
-  { id: 'moana', emoji: '🌺', name: 'Moana', section: 'characters' },
-  { id: 'bruno', emoji: '🔮', name: 'Bruno', section: 'characters' },
-  { id: 'barbie', emoji: '💖', name: 'Barbie', section: 'characters' },
-  { id: 'ken', emoji: '🩷', name: 'Ken', section: 'characters' },
-  { id: 'gru', emoji: '🦹', name: 'Gru', section: 'characters' },
-  { id: 'katniss', emoji: '🏹', name: 'Katniss', section: 'characters' },
+  { id: 'spongebob', emoji: '🧽', name: 'SpongeBob', section: 'characters', image: '/characters/spongebob.png' },
+  { id: 'stitch', emoji: '👽', name: 'Stitch', section: 'characters', image: '/characters/stitch.png' },
+  { id: 'moana', emoji: '🌺', name: 'Moana', section: 'characters', image: '/characters/moana.png' },
+  { id: 'bruno', emoji: '🔮', name: 'Bruno', section: 'characters', image: '/characters/bruno.png' },
+  { id: 'barbie', emoji: '💖', name: 'Barbie', section: 'characters', image: '/characters/barbie.png' },
+  { id: 'ken', emoji: '🩷', name: 'Ken', section: 'characters', image: '/characters/ken.png' },
+  { id: 'gru', emoji: '🦹', name: 'Gru', section: 'characters', image: '/characters/gru.png' },
+  { id: 'katniss', emoji: '🏹', name: 'Katniss', section: 'characters', image: '/characters/katniss.png' },
   // Brooklyn 99
   { id: 'jake', emoji: '🚔', name: 'Jake', section: 'brooklyn99' },
   { id: 'amy', emoji: '📋', name: 'Amy', section: 'brooklyn99' },
@@ -540,10 +541,14 @@ Rules for ALL versions:
                   key={item.id}
                   onClick={() => toggleIngredient(item)}
                   style={{
-                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
+                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s', overflow: 'hidden'
                   }}
                 >
-                  <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover' }} />
+                  ) : (
+                    <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  )}
                   <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 80 }}>{item.name}</span>
                 </button>
               ))}
