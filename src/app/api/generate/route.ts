@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         model: "claude-opus-4-5-20251101",
-        max_tokens: 100,
+        max_tokens: 400,
         temperature: 0.9,
         messages: [{ role: "user", content: prompt }]
       })

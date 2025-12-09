@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const voiceDescriptions: Record<string, string> = {
   chill: "super relaxed and casual, no pressure vibes, lowercase energy",
@@ -42,6 +42,27 @@ const voiceDescriptions: Record<string, string> = {
   ken: "Ken - himbo energy, 'I'm just Ken', earnest but clueless",
   gru: "Gru - villain with soft heart, dramatic declarations, minion dad energy",
   katniss: "Katniss - serious, protective, reluctant hero, blunt and guarded",
+  // Brooklyn 99
+  jake: "Jake Peralta - immature detective, pop culture references, enthusiastic, 'cool cool cool cool'",
+  amy: "Amy Santiago - type-A perfectionist, loves binders and rules, competitive, nervous rambling",
+  holt: "Captain Holt - deadpan serious, formal speech, unexpectedly dramatic, dry humor",
+  rosa: "Rosa Diaz - tough, blunt, scary, secretly soft, minimal words maximum impact",
+  charles: "Charles Boyle - food obsessed, overly supportive, loyal to a fault, dramatic about friendship",
+  gina: "Gina Linetti - self-absorbed, confident queen, dance references, thinks she's better than everyone",
+  // Modern Family
+  phil: "Phil Dunphy - dad jokes, thinks he's cool, 'cool dad' energy, puns, overly enthusiastic",
+  gloria: "Gloria Pritchett - dramatic, passionate, fierce mama, Colombian flair, loud and loving",
+  claire: "Claire Dunphy - stressed mom, competitive, control freak, wine energy",
+  luke: "Luke Dunphy - lovably clueless, simple observations, accidentally profound",
+  mitch: "Mitchell Pritchett - anxious, overthinking, dramatic gasps, neurotic but loving",
+  cam: "Cam Tucker - theatrical, emotional, football references, dramatic entrances, sensitive",
+  // Shakespeare
+  romeo: "Romeo - dramatic romantic, poetic declarations of love, impulsive, 'but soft!' energy",
+  juliet: "Juliet - passionate, youthful intensity, romantic defiance, balcony speech vibes",
+  hamlet: "Hamlet - existential angst, overthinking everything, 'to be or not to be', brooding indecision",
+  ladymacbeth: "Lady Macbeth - ambitious, persuasive, dark determination, 'out damn spot' guilt",
+  puck: "Puck - mischievous trickster, playful chaos, 'what fools these mortals be'",
+  mercutio: "Mercutio - witty, sarcastic, dramatic flair, 'a plague on both your houses'",
   // texting contexts
   newcrush: "texting a new crush - nervous, flirty, trying to be cool but overthinking everything",
   situationship: "texting a situationship - casual but loaded, reading into everything, playing it cool",
@@ -117,6 +138,27 @@ const allIngredients: Ingredient[] = [
   { id: 'ken', emoji: '🩷', name: 'Ken', section: 'characters' },
   { id: 'gru', emoji: '🦹', name: 'Gru', section: 'characters' },
   { id: 'katniss', emoji: '🏹', name: 'Katniss', section: 'characters' },
+  // Brooklyn 99
+  { id: 'jake', emoji: '🚔', name: 'Jake', section: 'brooklyn99' },
+  { id: 'amy', emoji: '📋', name: 'Amy', section: 'brooklyn99' },
+  { id: 'holt', emoji: '🎖️', name: 'Holt', section: 'brooklyn99' },
+  { id: 'rosa', emoji: '🖤', name: 'Rosa', section: 'brooklyn99' },
+  { id: 'charles', emoji: '🍝', name: 'Charles', section: 'brooklyn99' },
+  { id: 'gina', emoji: '💃', name: 'Gina', section: 'brooklyn99' },
+  // Modern Family
+  { id: 'phil', emoji: '👔', name: 'Phil', section: 'modernfamily' },
+  { id: 'gloria', emoji: '💋', name: 'Gloria', section: 'modernfamily' },
+  { id: 'claire', emoji: '🍷', name: 'Claire', section: 'modernfamily' },
+  { id: 'luke', emoji: '🎮', name: 'Luke', section: 'modernfamily' },
+  { id: 'mitch', emoji: '😰', name: 'Mitch', section: 'modernfamily' },
+  { id: 'cam', emoji: '🏈', name: 'Cam', section: 'modernfamily' },
+  // Shakespeare
+  { id: 'romeo', emoji: '🌹', name: 'Romeo', section: 'shakespeare' },
+  { id: 'juliet', emoji: '💕', name: 'Juliet', section: 'shakespeare' },
+  { id: 'hamlet', emoji: '💀', name: 'Hamlet', section: 'shakespeare' },
+  { id: 'ladymacbeth', emoji: '🗡️', name: 'Lady Macbeth', section: 'shakespeare' },
+  { id: 'puck', emoji: '🧚', name: 'Puck', section: 'shakespeare' },
+  { id: 'mercutio', emoji: '⚔️', name: 'Mercutio', section: 'shakespeare' },
   // texting - kid-friendly first, romantic at the end
   { id: 'bestie', emoji: '👯', name: 'bestie', section: 'texting' },
   { id: 'groupchat', emoji: '👥', name: 'group chat', section: 'texting' },
@@ -148,15 +190,66 @@ const allIngredients: Ingredient[] = [
 export default function Mixer() {
   const [situation, setSituation] = useState('');
   const [selected, setSelected] = useState<Ingredient[]>([]);
-  const [result, setResult] = useState('');
+  const [results, setResults] = useState<{ tiny: string; short: string; medium: string; long: string } | null>(null);
+  const [selectedSize, setSelectedSize] = useState<'tiny' | 'short' | 'medium' | 'long'>('medium');
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
+  const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
+
+  // Generate contextual loading messages based on selected ingredients
+  const getLoadingMessages = () => {
+    const messages: string[] = [];
+    const characters = selected.filter(s => s.section === 'characters');
+    const vibesSelected = selected.filter(s => s.section === 'vibes');
+    const textingSelected = selected.filter(s => s.section === 'texting');
+
+    // Add character-specific messages
+    characters.forEach(c => {
+      messages.push(`channeling ${c.name}...`);
+    });
+
+    // Add vibe-specific messages
+    vibesSelected.forEach(v => {
+      messages.push(`adding ${v.name} energy...`);
+    });
+
+    // Add texting context messages
+    textingSelected.forEach(t => {
+      messages.push(`preparing for ${t.name}...`);
+    });
+
+    // Add generic fun messages
+    messages.push('shaking things up...');
+    messages.push('brewing the perfect text...');
+    messages.push('consulting the vibes...');
+    messages.push('mixing ingredients...');
+
+    return messages;
+  };
+
+  // Rotate through loading messages
+  useEffect(() => {
+    if (!isLoading) {
+      setLoadingMsgIndex(0);
+      return;
+    }
+
+    const messages = getLoadingMessages();
+    const interval = setInterval(() => {
+      setLoadingMsgIndex(prev => (prev + 1) % messages.length);
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [isLoading, selected]);
 
   const vibes = allIngredients.filter(i => i.section === 'vibes');
   const characters = allIngredients.filter(i => i.section === 'characters');
   const texting = allIngredients.filter(i => i.section === 'texting');
+  const brooklyn99 = allIngredients.filter(i => i.section === 'brooklyn99');
+  const modernfamily = allIngredients.filter(i => i.section === 'modernfamily');
+  const shakespeare = allIngredients.filter(i => i.section === 'shakespeare');
 
   const toggleIngredient = (item: Ingredient) => {
     const exists = selected.find(s => s.id === item.id);
@@ -177,25 +270,28 @@ export default function Mixer() {
 
     setIsLoading(true);
     setShowResult(true);
-    setResult('');
+    setResults(null);
 
     // Separate texting context (who) from styles (how)
     const textingContext = selected.find(i => i.section === 'texting');
     const styles = selected.filter(i => i.section !== 'texting');
     const styleList = styles.map(i => voiceDescriptions[i.id]).join(' + ');
 
-    const prompt = `Write a text message (1-2 short sentences max).
+    const prompt = `Write 4 versions of a text message at different lengths.
 
 What to say: "${situation}"${textingContext ? `
 Texting: ${voiceDescriptions[textingContext.id]}` : ''}${styles.length > 0 ? `
 Style: ${styleList}` : ''}
 
-Rules:
-- Output ONLY the message, no quotes
+Output valid JSON with exactly this format:
+{"tiny":"5-8 words max","short":"10-15 words","medium":"20-30 words","long":"40-50 words"}
+
+Rules for ALL versions:
 - Lowercase is fine, abbreviations ok (u, rn, ngl, lol)
-- No hashtags, no emojis unless they feel natural
-- Sound like a real text, not a script
-- Be creative and funny`;
+- No hashtags, no emojis unless natural
+- Sound like real texts, not scripts
+- Be creative and funny
+- Each version should feel complete, not cut off`;
 
     try {
       const response = await fetch('/api/generate', {
@@ -205,18 +301,40 @@ Rules:
       });
 
       const data = await response.json();
-      setResult(data.text || data.error || "couldn't mix that one, shake again?");
+
+      // Parse JSON response - extract JSON from response if wrapped in extra text
+      try {
+        let jsonText = data.text;
+        // Find JSON object in the response (in case Claude adds extra text)
+        const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          jsonText = jsonMatch[0];
+        }
+        const parsed = JSON.parse(jsonText);
+        if (parsed.tiny && parsed.short && parsed.medium && parsed.long) {
+          setResults(parsed);
+        } else {
+          // JSON parsed but missing fields - use original text
+          setResults({ tiny: data.text, short: data.text, medium: data.text, long: data.text });
+        }
+      } catch {
+        // Fallback: use the text as-is for all sizes
+        console.log('JSON parse failed, raw text:', data.text);
+        setResults({ tiny: data.text, short: data.text, medium: data.text, long: data.text });
+      }
     } catch {
-      setResult("couldn't mix that one, shake again?");
+      setResults({ tiny: "couldn't mix that one", short: "couldn't mix that one, shake again?", medium: "couldn't mix that one, shake again?", long: "couldn't mix that one, shake again?" });
     }
 
     setIsLoading(false);
   };
 
+  const currentResult = results?.[selectedSize] || '';
+
   const copyResult = async () => {
-    if (!result) return;
+    if (!currentResult) return;
     try {
-      await navigator.clipboard.writeText(result);
+      await navigator.clipboard.writeText(currentResult);
       setCopied(true);
       setTimeout(() => {
         setCopied(false);
@@ -226,16 +344,20 @@ Rules:
   };
 
   const shareResult = async () => {
-    if (!result) return;
+    if (!currentResult) return;
     if (navigator.share) {
       try {
-        await navigator.share({ text: result });
+        await navigator.share({ text: currentResult });
         setShowResult(false);
       } catch {}
     } else {
       copyResult();
     }
   };
+
+  const sizes: Array<'tiny' | 'short' | 'medium' | 'long'> = ['tiny', 'short', 'medium', 'long'];
+  const sizeLabels = { tiny: 'XS', short: 'S', medium: 'M', long: 'L' };
+  const sizeHeights = { tiny: 80, short: 120, medium: 180, long: 280 };
 
   const isReady = situation.trim() && selected.length > 0;
 
@@ -262,7 +384,7 @@ Rules:
         )}
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden' }}>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
             <span style={{ color: '#666', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>vibes</span>
@@ -280,6 +402,30 @@ Rules:
                 >
                   <span style={{ fontSize: 32 }}>{item.emoji}</span>
                   <span style={{ fontSize: 11, color: '#888' }}>{item.name}</span>
+                </button>
+              ))}
+            </div>
+            <div style={{ position: 'absolute', right: 0, top: 0, bottom: 4, width: 40, background: 'linear-gradient(to right, transparent, #000)', pointerEvents: 'none' }} />
+          </div>
+        </div>
+
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <span style={{ color: '#666', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>texting</span>
+            <span style={{ color: '#444', fontSize: 10 }}>scroll →</span>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
+              {texting.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => toggleIngredient(item)}
+                  style={{
+                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
+                  }}
+                >
+                  <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 80 }}>{item.name}</span>
                 </button>
               ))}
             </div>
@@ -313,12 +459,60 @@ Rules:
 
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-            <span style={{ color: '#666', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>texting</span>
+            <span style={{ color: '#666', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>Brooklyn 99</span>
             <span style={{ color: '#444', fontSize: 10 }}>scroll →</span>
           </div>
           <div style={{ position: 'relative' }}>
             <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
-              {texting.map(item => (
+              {brooklyn99.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => toggleIngredient(item)}
+                  style={{
+                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
+                  }}
+                >
+                  <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 80 }}>{item.name}</span>
+                </button>
+              ))}
+            </div>
+            <div style={{ position: 'absolute', right: 0, top: 0, bottom: 4, width: 40, background: 'linear-gradient(to right, transparent, #000)', pointerEvents: 'none' }} />
+          </div>
+        </div>
+
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <span style={{ color: '#666', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>Modern Family</span>
+            <span style={{ color: '#444', fontSize: 10 }}>scroll →</span>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
+              {modernfamily.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => toggleIngredient(item)}
+                  style={{
+                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
+                  }}
+                >
+                  <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 80 }}>{item.name}</span>
+                </button>
+              ))}
+            </div>
+            <div style={{ position: 'absolute', right: 0, top: 0, bottom: 4, width: 40, background: 'linear-gradient(to right, transparent, #000)', pointerEvents: 'none' }} />
+          </div>
+        </div>
+
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <span style={{ color: '#666', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>Shakespeare</span>
+            <span style={{ color: '#444', fontSize: 10 }}>scroll →</span>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
+              {shakespeare.map(item => (
                 <button
                   key={item.id}
                   onClick={() => toggleIngredient(item)}
@@ -373,23 +567,73 @@ Rules:
               ))}
             </div>
 
+            {!isLoading && (
+              <div style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
+                {sizes.map(size => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: 20,
+                      border: selectedSize === size ? '2px solid #fff' : '2px solid #333',
+                      background: selectedSize === size ? '#fff' : '#1a1a1a',
+                      color: selectedSize === size ? '#000' : '#666',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s'
+                    }}
+                  >
+                    {sizeLabels[size]}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div
               onClick={!isLoading ? copyResult : undefined}
-              style={{ background: '#1a1a1a', borderRadius: 20, padding: 24, width: '100%', textAlign: 'center', cursor: isLoading ? 'default' : 'pointer' }}
+              style={{
+                background: '#1a1a1a',
+                borderRadius: 20,
+                padding: 24,
+                width: '100%',
+                minHeight: sizeHeights[selectedSize],
+                textAlign: 'center',
+                cursor: isLoading ? 'default' : 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                transition: 'min-height 0.3s ease'
+              }}
             >
               {isLoading ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    {selected.map((item) => (
-                      <span key={item.id} style={{ fontSize: 28, animation: 'bounce 0.6s infinite alternate' }}>{item.emoji}</span>
-                    ))}
-                  </div>
-                  <span style={{ color: '#666', fontSize: 14 }}>mixing...</span>
-                  <style>{`@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }`}</style>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+                  <span style={{
+                    fontSize: 48,
+                    display: 'inline-block',
+                    animation: 'gentleRock 1.2s ease-in-out infinite',
+                    transformOrigin: 'bottom center'
+                  }}>🍸</span>
+                  <span style={{
+                    color: '#888',
+                    fontSize: 14,
+                    fontStyle: 'italic',
+                    minHeight: 20,
+                    transition: 'opacity 0.3s ease'
+                  }} key={loadingMsgIndex}>
+                    {getLoadingMessages()[loadingMsgIndex % getLoadingMessages().length]}
+                  </span>
+                  <style>{`
+                    @keyframes gentleRock {
+                      0%, 100% { transform: rotate(-8deg); }
+                      50% { transform: rotate(8deg); }
+                    }
+                  `}</style>
                 </div>
               ) : (
                 <div>
-                  <p style={{ fontSize: 18, lineHeight: 1.5, margin: 0 }}>&quot;{result}&quot;</p>
+                  <p style={{ fontSize: selectedSize === 'long' ? 16 : 18, lineHeight: 1.5, margin: 0 }}>&quot;{currentResult}&quot;</p>
                   <p style={{ color: '#666', fontSize: 12, marginTop: 12 }}>tap to copy</p>
                 </div>
               )}
