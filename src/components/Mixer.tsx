@@ -314,7 +314,7 @@ export default function Mixer() {
     return () => clearInterval(interval);
   }, [isLoading, selected]);
 
-  // Auto-copy when results arrive
+  // Auto-copy when results first arrive (not on size change)
   useEffect(() => {
     if (results && !isLoading && showResult) {
       const textToCopy = results[selectedSize];
@@ -326,7 +326,8 @@ export default function Mixer() {
         }).catch(() => {});
       }
     }
-  }, [results, isLoading, showResult, selectedSize]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [results]); // Only trigger on new results, not size changes
 
   const vibes = allIngredients.filter(i => i.section === 'vibes');
   const characters = allIngredients.filter(i => i.section === 'characters');
