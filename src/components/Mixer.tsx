@@ -210,18 +210,18 @@ const allIngredients: Ingredient[] = [
   { id: 'benedick', emoji: '🎩', name: 'Benedick', section: 'shakespeare' },
   { id: 'bottom', emoji: '🫏', name: 'Bottom', section: 'shakespeare' },
   // Christmas
-  { id: 'santa', emoji: '🎅', name: 'Santa', section: 'christmas' },
-  { id: 'grinch', emoji: '💚', name: 'Grinch', section: 'christmas' },
-  { id: 'buddyelf', emoji: '🧝', name: 'Buddy', section: 'christmas' },
-  { id: 'scrooge', emoji: '💰', name: 'Scrooge', section: 'christmas' },
-  { id: 'kevinmccallister', emoji: '🏠', name: 'Kevin', section: 'christmas' },
-  { id: 'rudolph', emoji: '🦌', name: 'Rudolph', section: 'christmas' },
-  { id: 'jackskellington', emoji: '🎃', name: 'Jack', section: 'christmas' },
-  { id: 'clarkgriswold', emoji: '🎄', name: 'Clark', section: 'christmas' },
-  { id: 'frosty', emoji: '⛄', name: 'Frosty', section: 'christmas' },
-  { id: 'cindylou', emoji: '🎀', name: 'Cindy Lou', section: 'christmas' },
-  { id: 'snowmiser', emoji: '❄️', name: 'Snow Miser', section: 'christmas' },
-  { id: 'ralphie', emoji: '🔫', name: 'Ralphie', section: 'christmas' },
+  { id: 'santa', emoji: '🎅', name: 'Santa', section: 'christmas', image: '/characters/santa.png' },
+  { id: 'grinch', emoji: '💚', name: 'Grinch', section: 'christmas', image: '/characters/grinch.png' },
+  { id: 'buddyelf', emoji: '🧝', name: 'Buddy', section: 'christmas', image: '/characters/buddyelf.png' },
+  { id: 'scrooge', emoji: '💰', name: 'Scrooge', section: 'christmas', image: '/characters/scrooge.png' },
+  { id: 'kevinmccallister', emoji: '🏠', name: 'Kevin', section: 'christmas', image: '/characters/kevinmccallister.png' },
+  { id: 'rudolph', emoji: '🦌', name: 'Rudolph', section: 'christmas', image: '/characters/rudolph.png' },
+  { id: 'jackskellington', emoji: '🎃', name: 'Jack', section: 'christmas', image: '/characters/jackskellington.png' },
+  { id: 'clarkgriswold', emoji: '🎄', name: 'Clark', section: 'christmas', image: '/characters/clarkgriswold.png' },
+  { id: 'frosty', emoji: '⛄', name: 'Frosty', section: 'christmas', image: '/characters/frosty.png' },
+  { id: 'cindylou', emoji: '🎀', name: 'Cindy Lou', section: 'christmas', image: '/characters/cindylou.png' },
+  { id: 'snowmiser', emoji: '❄️', name: 'Snow Miser', section: 'christmas', image: '/characters/snowmiser.png' },
+  { id: 'ralphie', emoji: '🔫', name: 'Ralphie', section: 'christmas', image: '/characters/ralphie.png' },
   // texting - kid-friendly first, romantic at the end
   { id: 'bestie', emoji: '👯', name: 'bestie', section: 'texting' },
   { id: 'groupchat', emoji: '👥', name: 'group chat', section: 'texting' },
@@ -569,10 +569,14 @@ Rules for ALL versions:
                   key={item.id}
                   onClick={() => toggleIngredient(item)}
                   style={{
-                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
+                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s', overflow: 'hidden'
                   }}
                 >
-                  <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover' }} />
+                  ) : (
+                    <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  )}
                   <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 80 }}>{item.name}</span>
                 </button>
               ))}
