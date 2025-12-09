@@ -179,18 +179,23 @@ export default function Mixer() {
     setShowResult(true);
     setResult('');
 
-    const voiceList = selected.map(i => `- ${i.name}: ${voiceDescriptions[i.id]}`).join('\n');
+    // Separate texting context (who) from styles (how)
+    const textingContext = selected.find(i => i.section === 'texting');
+    const styles = selected.filter(i => i.section !== 'texting');
+    const styleList = styles.map(i => voiceDescriptions[i.id]).join(' + ');
 
-    const prompt = `Transform this into a short text message (under 25 words).
+    const prompt = `Write a text message (1-2 short sentences max).
 
-What I need to say: "${situation}"
+What to say: "${situation}"${textingContext ? `
+Texting: ${voiceDescriptions[textingContext.id]}` : ''}${styles.length > 0 ? `
+Style: ${styleList}` : ''}
 
-Style(s) to use:
-${voiceList}
-
-${selected.length > 1 ? 'Blend these styles creatively into ONE message.' : ''}
-
-Output ONLY the message text. No quotes. Be creative, funny, and authentic - something a teen would actually send.`;
+Rules:
+- Output ONLY the message, no quotes
+- Lowercase is fine, abbreviations ok (u, rn, ngl, lol)
+- No hashtags, no emojis unless they feel natural
+- Sound like a real text, not a script
+- Be creative and funny`;
 
     try {
       const response = await fetch('/api/generate', {
