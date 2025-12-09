@@ -197,18 +197,18 @@ const allIngredients: Ingredient[] = [
   { id: 'lily', emoji: '😏', name: 'Lily', section: 'modernfamily' },
   { id: 'dylan', emoji: '🎸', name: 'Dylan', section: 'modernfamily' },
   // Shakespeare
-  { id: 'romeo', emoji: '🌹', name: 'Romeo', section: 'shakespeare' },
-  { id: 'juliet', emoji: '💕', name: 'Juliet', section: 'shakespeare' },
-  { id: 'hamlet', emoji: '💀', name: 'Hamlet', section: 'shakespeare' },
-  { id: 'ladymacbeth', emoji: '🗡️', name: 'Lady Macbeth', section: 'shakespeare' },
-  { id: 'puck', emoji: '🧚', name: 'Puck', section: 'shakespeare' },
-  { id: 'mercutio', emoji: '⚔️', name: 'Mercutio', section: 'shakespeare' },
-  { id: 'ophelia', emoji: '🌸', name: 'Ophelia', section: 'shakespeare' },
-  { id: 'macbeth', emoji: '👑', name: 'Macbeth', section: 'shakespeare' },
-  { id: 'falstaff', emoji: '🍺', name: 'Falstaff', section: 'shakespeare' },
-  { id: 'beatrice', emoji: '💬', name: 'Beatrice', section: 'shakespeare' },
-  { id: 'benedick', emoji: '🎩', name: 'Benedick', section: 'shakespeare' },
-  { id: 'bottom', emoji: '🫏', name: 'Bottom', section: 'shakespeare' },
+  { id: 'romeo', emoji: '🌹', name: 'Romeo', section: 'shakespeare', image: '/characters/romeo.png' },
+  { id: 'juliet', emoji: '💕', name: 'Juliet', section: 'shakespeare', image: '/characters/juliet.png' },
+  { id: 'hamlet', emoji: '💀', name: 'Hamlet', section: 'shakespeare', image: '/characters/hamlet.png' },
+  { id: 'ladymacbeth', emoji: '🗡️', name: 'Lady Macbeth', section: 'shakespeare', image: '/characters/ladymacbeth.png' },
+  { id: 'puck', emoji: '🧚', name: 'Puck', section: 'shakespeare', image: '/characters/puck.png' },
+  { id: 'mercutio', emoji: '⚔️', name: 'Mercutio', section: 'shakespeare', image: '/characters/mercutio.png' },
+  { id: 'ophelia', emoji: '🌸', name: 'Ophelia', section: 'shakespeare', image: '/characters/ophelia.png' },
+  { id: 'macbeth', emoji: '👑', name: 'Macbeth', section: 'shakespeare', image: '/characters/macbeth.png' },
+  { id: 'falstaff', emoji: '🍺', name: 'Falstaff', section: 'shakespeare', image: '/characters/falstaff.png' },
+  { id: 'beatrice', emoji: '💬', name: 'Beatrice', section: 'shakespeare', image: '/characters/beatrice.png' },
+  { id: 'benedick', emoji: '🎩', name: 'Benedick', section: 'shakespeare', image: '/characters/benedick.png' },
+  { id: 'bottom', emoji: '🫏', name: 'Bottom', section: 'shakespeare', image: '/characters/bottom.png' },
   // Christmas
   { id: 'santa', emoji: '🎅', name: 'Santa', section: 'christmas', image: '/characters/santa.png' },
   { id: 'grinch', emoji: '💚', name: 'Grinch', section: 'christmas', image: '/characters/grinch.png' },
@@ -645,10 +645,14 @@ Rules for ALL versions:
                   key={item.id}
                   onClick={() => toggleIngredient(item)}
                   style={{
-                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
+                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s', overflow: 'hidden'
                   }}
                 >
-                  <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover' }} />
+                  ) : (
+                    <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  )}
                   <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 80 }}>{item.name}</span>
                 </button>
               ))}
