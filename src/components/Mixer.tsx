@@ -49,6 +49,12 @@ const voiceDescriptions: Record<string, string> = {
   rosa: "Rosa Diaz - tough, blunt, scary, secretly soft, minimal words maximum impact",
   charles: "Charles Boyle - food obsessed, overly supportive, loyal to a fault, dramatic about friendship",
   gina: "Gina Linetti - self-absorbed, confident queen, dance references, thinks she's better than everyone",
+  terry: "Terry Jeffords - speaks in third person, loves yogurt, protective dad energy, supportive",
+  hitchcock: "Hitchcock - lazy, inappropriate, food obsessed, surprisingly insightful sometimes",
+  scully: "Scully - Hitchcock's partner, sweet, oblivious, unexpectedly wholesome",
+  kevin: "Kevin Cozner - academic, formal, dry wit like Holt, sophisticated references",
+  dougjudy: "Doug Judy - smooth, charismatic, unreliable friend, 'Rosa Rosa Rosa'",
+  pimento: "Adrian Pimento - unhinged, paranoid, intense, chaotic feral energy",
   // Modern Family
   phil: "Phil Dunphy - dad jokes, thinks he's cool, 'cool dad' energy, puns, overly enthusiastic",
   gloria: "Gloria Pritchett - dramatic, passionate, fierce mama, Colombian flair, loud and loving",
@@ -56,6 +62,12 @@ const voiceDescriptions: Record<string, string> = {
   luke: "Luke Dunphy - lovably clueless, simple observations, accidentally profound",
   mitch: "Mitchell Pritchett - anxious, overthinking, dramatic gasps, neurotic but loving",
   cam: "Cam Tucker - theatrical, emotional, football references, dramatic entrances, sensitive",
+  jay: "Jay Pritchett - grumpy old man, sarcastic, secretly soft, tough love",
+  haley: "Haley Dunphy - social media obsessed, surprisingly clever, shopping references",
+  alex: "Alex Dunphy - genius, condescending, underappreciated, sarcastic intellectual",
+  manny: "Manny Delgado - romantic old soul, pretentious, poetic, dramatic about love",
+  lily: "Lily Tucker-Pritchett - savage, deadpan brutal honesty, sarcastic child",
+  dylan: "Dylan Marshall - himbo energy, accidentally wise, sweet but clueless, guitar references",
   // Shakespeare
   romeo: "Romeo - dramatic romantic, poetic declarations of love, impulsive, 'but soft!' energy",
   juliet: "Juliet - passionate, youthful intensity, romantic defiance, balcony speech vibes",
@@ -63,6 +75,25 @@ const voiceDescriptions: Record<string, string> = {
   ladymacbeth: "Lady Macbeth - ambitious, persuasive, dark determination, 'out damn spot' guilt",
   puck: "Puck - mischievous trickster, playful chaos, 'what fools these mortals be'",
   mercutio: "Mercutio - witty, sarcastic, dramatic flair, 'a plague on both your houses'",
+  ophelia: "Ophelia - tragic, poetic, delicate, flowers and water imagery",
+  macbeth: "Macbeth - ambitious, guilty, paranoid, 'is this a dagger' energy",
+  falstaff: "Falstaff - jovial, witty, larger than life, loves food and drink",
+  beatrice: "Beatrice - sharp-tongued, witty, proud, verbal sparring champion",
+  benedick: "Benedick - sarcastic, proud, secretly romantic, witty banter",
+  bottom: "Bottom - overconfident, theatrical, lovably oblivious, donkey transformation energy",
+  // Christmas
+  santa: "Santa Claus - jolly, generous, 'ho ho ho', knows if you've been naughty or nice",
+  grinch: "The Grinch - grumpy, cynical, heart growing three sizes, Mt. Crumpit energy",
+  buddyelf: "Buddy the Elf - pure innocent joy, enthusiastic, 'SANTA!', loves syrup on everything",
+  scrooge: "Ebenezer Scrooge - miserly then reformed, 'bah humbug' to generous, dramatic transformation",
+  kevinmccallister: "Kevin McCallister - clever, resourceful, booby trap energy, 'keep the change ya filthy animal'",
+  rudolph: "Rudolph - underdog, shiny nose pride, proves the haters wrong",
+  jackskellington: "Jack Skellington - curious, dramatic, 'what's this?!', misguided but earnest",
+  clarkgriswold: "Clark Griswold - stressed dad, overly optimistic, disaster-prone, 'hallelujah' moments",
+  frosty: "Frosty - jolly happy soul, innocent, 'happy birthday!', melting anxiety",
+  cindylou: "Cindy Lou Who - innocent, questioning, heart of gold, 'why are you taking our tree?'",
+  snowmiser: "Snow Miser - dramatic, fabulous, 'I'm Mr. White Christmas', sibling rivalry",
+  ralphie: "Ralphie Parker - obsessive, nostalgic, 'you'll shoot your eye out', decoder ring disappointment",
   // texting contexts
   newcrush: "texting a new crush - nervous, flirty, trying to be cool but overthinking everything",
   situationship: "texting a situationship - casual but loaded, reading into everything, playing it cool",
@@ -145,6 +176,12 @@ const allIngredients: Ingredient[] = [
   { id: 'rosa', emoji: '🖤', name: 'Rosa', section: 'brooklyn99' },
   { id: 'charles', emoji: '🍝', name: 'Charles', section: 'brooklyn99' },
   { id: 'gina', emoji: '💃', name: 'Gina', section: 'brooklyn99' },
+  { id: 'terry', emoji: '💪', name: 'Terry', section: 'brooklyn99' },
+  { id: 'hitchcock', emoji: '🍕', name: 'Hitchcock', section: 'brooklyn99' },
+  { id: 'scully', emoji: '🥤', name: 'Scully', section: 'brooklyn99' },
+  { id: 'kevin', emoji: '🎓', name: 'Kevin', section: 'brooklyn99' },
+  { id: 'dougjudy', emoji: '🎤', name: 'Doug Judy', section: 'brooklyn99' },
+  { id: 'pimento', emoji: '🔪', name: 'Pimento', section: 'brooklyn99' },
   // Modern Family
   { id: 'phil', emoji: '👔', name: 'Phil', section: 'modernfamily' },
   { id: 'gloria', emoji: '💋', name: 'Gloria', section: 'modernfamily' },
@@ -152,6 +189,12 @@ const allIngredients: Ingredient[] = [
   { id: 'luke', emoji: '🎮', name: 'Luke', section: 'modernfamily' },
   { id: 'mitch', emoji: '😰', name: 'Mitch', section: 'modernfamily' },
   { id: 'cam', emoji: '🏈', name: 'Cam', section: 'modernfamily' },
+  { id: 'jay', emoji: '🛋️', name: 'Jay', section: 'modernfamily' },
+  { id: 'haley', emoji: '📱', name: 'Haley', section: 'modernfamily' },
+  { id: 'alex', emoji: '🎓', name: 'Alex', section: 'modernfamily' },
+  { id: 'manny', emoji: '🎭', name: 'Manny', section: 'modernfamily' },
+  { id: 'lily', emoji: '😏', name: 'Lily', section: 'modernfamily' },
+  { id: 'dylan', emoji: '🎸', name: 'Dylan', section: 'modernfamily' },
   // Shakespeare
   { id: 'romeo', emoji: '🌹', name: 'Romeo', section: 'shakespeare' },
   { id: 'juliet', emoji: '💕', name: 'Juliet', section: 'shakespeare' },
@@ -159,6 +202,25 @@ const allIngredients: Ingredient[] = [
   { id: 'ladymacbeth', emoji: '🗡️', name: 'Lady Macbeth', section: 'shakespeare' },
   { id: 'puck', emoji: '🧚', name: 'Puck', section: 'shakespeare' },
   { id: 'mercutio', emoji: '⚔️', name: 'Mercutio', section: 'shakespeare' },
+  { id: 'ophelia', emoji: '🌸', name: 'Ophelia', section: 'shakespeare' },
+  { id: 'macbeth', emoji: '👑', name: 'Macbeth', section: 'shakespeare' },
+  { id: 'falstaff', emoji: '🍺', name: 'Falstaff', section: 'shakespeare' },
+  { id: 'beatrice', emoji: '💬', name: 'Beatrice', section: 'shakespeare' },
+  { id: 'benedick', emoji: '🎩', name: 'Benedick', section: 'shakespeare' },
+  { id: 'bottom', emoji: '🫏', name: 'Bottom', section: 'shakespeare' },
+  // Christmas
+  { id: 'santa', emoji: '🎅', name: 'Santa', section: 'christmas' },
+  { id: 'grinch', emoji: '💚', name: 'Grinch', section: 'christmas' },
+  { id: 'buddyelf', emoji: '🧝', name: 'Buddy', section: 'christmas' },
+  { id: 'scrooge', emoji: '💰', name: 'Scrooge', section: 'christmas' },
+  { id: 'kevinmccallister', emoji: '🏠', name: 'Kevin', section: 'christmas' },
+  { id: 'rudolph', emoji: '🦌', name: 'Rudolph', section: 'christmas' },
+  { id: 'jackskellington', emoji: '🎃', name: 'Jack', section: 'christmas' },
+  { id: 'clarkgriswold', emoji: '🎄', name: 'Clark', section: 'christmas' },
+  { id: 'frosty', emoji: '⛄', name: 'Frosty', section: 'christmas' },
+  { id: 'cindylou', emoji: '🎀', name: 'Cindy Lou', section: 'christmas' },
+  { id: 'snowmiser', emoji: '❄️', name: 'Snow Miser', section: 'christmas' },
+  { id: 'ralphie', emoji: '🔫', name: 'Ralphie', section: 'christmas' },
   // texting - kid-friendly first, romantic at the end
   { id: 'bestie', emoji: '👯', name: 'bestie', section: 'texting' },
   { id: 'groupchat', emoji: '👥', name: 'group chat', section: 'texting' },
@@ -250,6 +312,7 @@ export default function Mixer() {
   const brooklyn99 = allIngredients.filter(i => i.section === 'brooklyn99');
   const modernfamily = allIngredients.filter(i => i.section === 'modernfamily');
   const shakespeare = allIngredients.filter(i => i.section === 'shakespeare');
+  const christmas = allIngredients.filter(i => i.section === 'christmas');
 
   const toggleIngredient = (item: Ingredient) => {
     const exists = selected.find(s => s.id === item.id);
@@ -513,6 +576,30 @@ Rules for ALL versions:
           <div style={{ position: 'relative' }}>
             <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
               {shakespeare.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => toggleIngredient(item)}
+                  style={{
+                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
+                  }}
+                >
+                  <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 80 }}>{item.name}</span>
+                </button>
+              ))}
+            </div>
+            <div style={{ position: 'absolute', right: 0, top: 0, bottom: 4, width: 40, background: 'linear-gradient(to right, transparent, #000)', pointerEvents: 'none' }} />
+          </div>
+        </div>
+
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <span style={{ color: '#666', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>🎄 Christmas</span>
+            <span style={{ color: '#444', fontSize: 10 }}>scroll →</span>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
+              {christmas.map(item => (
                 <button
                   key={item.id}
                   onClick={() => toggleIngredient(item)}
