@@ -249,6 +249,13 @@ const allIngredients: Ingredient[] = [
   { id: 'ex', emoji: '💔', name: 'ex', section: 'texting' },
 ];
 
+// Haptic feedback helper
+const haptic = (pattern: number | number[]) => {
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    navigator.vibrate(pattern);
+  }
+};
+
 export default function Mixer() {
   const [situation, setSituation] = useState('');
   const [selected, setSelected] = useState<Ingredient[]>([]);
@@ -259,6 +266,7 @@ export default function Mixer() {
   const [copied, setCopied] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
+  const [autoCopied, setAutoCopied] = useState(false);
 
   // Generate contextual loading messages based on selected ingredients
   const getLoadingMessages = () => {
@@ -306,6 +314,20 @@ export default function Mixer() {
     return () => clearInterval(interval);
   }, [isLoading, selected]);
 
+  // Auto-copy when results arrive
+  useEffect(() => {
+    if (results && !isLoading && showResult) {
+      const textToCopy = results[selectedSize];
+      if (textToCopy) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          haptic(50); // Success vibration
+          setAutoCopied(true);
+          setTimeout(() => setAutoCopied(false), 2000);
+        }).catch(() => {});
+      }
+    }
+  }, [results, isLoading, showResult, selectedSize]);
+
   const vibes = allIngredients.filter(i => i.section === 'vibes');
   const characters = allIngredients.filter(i => i.section === 'characters');
   const texting = allIngredients.filter(i => i.section === 'texting');
@@ -315,6 +337,7 @@ export default function Mixer() {
   const christmas = allIngredients.filter(i => i.section === 'christmas');
 
   const toggleIngredient = (item: Ingredient) => {
+    haptic(10); // Light tap feedback
     const exists = selected.find(s => s.id === item.id);
     if (exists) {
       setSelected(selected.filter(s => s.id !== item.id));
@@ -325,6 +348,9 @@ export default function Mixer() {
 
   const doShake = async () => {
     if (!situation.trim() || selected.length === 0) return;
+
+    // Haptic shake pattern (vibrate, pause, vibrate...)
+    haptic([50, 30, 50, 30, 50, 30, 40, 30, 30, 30, 20]);
 
     // Trigger shake animation
     setIsShaking(true);
@@ -398,6 +424,7 @@ Rules for ALL versions:
     if (!currentResult) return;
     try {
       await navigator.clipboard.writeText(currentResult);
+      haptic(50); // Success vibration
       setCopied(true);
       setTimeout(() => {
         setCopied(false);
@@ -721,7 +748,9 @@ Rules for ALL versions:
               ) : (
                 <div>
                   <p style={{ fontSize: selectedSize === 'long' ? 16 : 18, lineHeight: 1.5, margin: 0 }}>&quot;{currentResult}&quot;</p>
-                  <p style={{ color: '#666', fontSize: 12, marginTop: 12 }}>tap to copy</p>
+                  <p style={{ color: autoCopied ? '#4ade80' : '#666', fontSize: 12, marginTop: 12, transition: 'color 0.2s' }}>
+                    {autoCopied ? '✓ copied!' : 'tap to copy again'}
+                  </p>
                 </div>
               )}
             </div>
