@@ -41,7 +41,33 @@ const voiceDescriptions: Record<string, string> = {
   barbie: "Barbie - optimistic, encouraging, believes in you, pink energy",
   ken: "Ken - himbo energy, 'I'm just Ken', earnest but clueless",
   gru: "Gru - villain with soft heart, dramatic declarations, minion dad energy",
-  katniss: "Katniss - serious, protective, reluctant hero, blunt and guarded"
+  katniss: "Katniss - serious, protective, reluctant hero, blunt and guarded",
+  // texting contexts
+  newcrush: "texting a new crush - nervous, flirty, trying to be cool but overthinking everything",
+  situationship: "texting a situationship - casual but loaded, reading into everything, playing it cool",
+  partner: "texting your partner - comfortable, loving, can be weird and real",
+  ex: "texting an ex - guarded, loaded subtext, emotionally complex, playing it cool",
+  leftonread: "someone left you on read - desperate but trying to act unbothered, second-guessing yourself",
+  bestie: "texting your bestie - unfiltered chaos, inside jokes, zero judgment",
+  groupchat: "texting the group chat - performing for the audience, going for laughs",
+  acquaintance: "texting an acquaintance - polite but distant, slightly formal",
+  friendupset: "texting a friend you upset - apologetic, careful, trying to fix things",
+  upsetfriend: "texting a friend who's upset with you - walking on eggshells, defensive but caring",
+  friendmadatyou: "texting a friend who upset you - trying to stay calm, subtle disappointment, need to address it",
+  mom: "texting mom - reassuring, patient, might need to explain memes",
+  dad: "texting dad - direct, might get a thumbs up back, dad joke energy",
+  parents: "texting both parents - formal-ish, keeping them in the loop, wholesome",
+  sibling: "texting a sibling - roasting is love, chaos, no filter needed",
+  grandparent: "texting grandparent - extra clear, patient, lots of love",
+  kids: "texting kids - fun, encouraging, age-appropriate, parental but cool",
+  teacher: "texting a teacher - respectful, formal, asking for help politely",
+  boss: "texting your boss - professional but not stiff, clear and competent",
+  coach: "texting your coach - respectful, showing commitment, brief and focused",
+  someoneNew: "texting someone new - friendly, curious, finding common ground",
+  onlinefriend: "texting an online friend - meme-fluent, parasocial comfort, very online",
+  gamingbuddy: "texting gaming buddy - game references, planning sessions, trash talk",
+  roommate: "texting a roommate - household logistics, passive-aggressive potential, casual",
+  stranger: "texting a stranger - polite, explaining context, getting to the point"
 };
 
 interface Ingredient {
@@ -91,6 +117,32 @@ const allIngredients: Ingredient[] = [
   { id: 'ken', emoji: '🩷', name: 'Ken', section: 'characters' },
   { id: 'gru', emoji: '🦹', name: 'Gru', section: 'characters' },
   { id: 'katniss', emoji: '🏹', name: 'Katniss', section: 'characters' },
+  // texting
+  { id: 'newcrush', emoji: '💘', name: 'new crush', section: 'texting' },
+  { id: 'situationship', emoji: '💕', name: 'situationship', section: 'texting' },
+  { id: 'partner', emoji: '💓', name: 'partner', section: 'texting' },
+  { id: 'ex', emoji: '💔', name: 'ex', section: 'texting' },
+  { id: 'leftonread', emoji: '👻', name: 'left on read', section: 'texting' },
+  { id: 'bestie', emoji: '👯', name: 'bestie', section: 'texting' },
+  { id: 'groupchat', emoji: '👥', name: 'group chat', section: 'texting' },
+  { id: 'acquaintance', emoji: '🤝', name: 'acquaintance', section: 'texting' },
+  { id: 'friendupset', emoji: '😬', name: 'friend you upset', section: 'texting' },
+  { id: 'upsetfriend', emoji: '🥺', name: "friend who's upset", section: 'texting' },
+  { id: 'friendmadatyou', emoji: '😤', name: 'friend who upset you', section: 'texting' },
+  { id: 'mom', emoji: '👩', name: 'mom', section: 'texting' },
+  { id: 'dad', emoji: '👨', name: 'dad', section: 'texting' },
+  { id: 'parents', emoji: '👨‍👩‍👧', name: 'both parents', section: 'texting' },
+  { id: 'sibling', emoji: '😈', name: 'sibling', section: 'texting' },
+  { id: 'grandparent', emoji: '👵', name: 'grandparent', section: 'texting' },
+  { id: 'kids', emoji: '👦', name: 'kids', section: 'texting' },
+  { id: 'teacher', emoji: '📚', name: 'teacher', section: 'texting' },
+  { id: 'boss', emoji: '💼', name: 'boss', section: 'texting' },
+  { id: 'coach', emoji: '🏃', name: 'coach', section: 'texting' },
+  { id: 'someoneNew', emoji: '🆕', name: 'someone new', section: 'texting' },
+  { id: 'onlinefriend', emoji: '🌐', name: 'online friend', section: 'texting' },
+  { id: 'gamingbuddy', emoji: '🎮', name: 'gaming buddy', section: 'texting' },
+  { id: 'roommate', emoji: '🏠', name: 'roommate', section: 'texting' },
+  { id: 'stranger', emoji: '🤷', name: 'stranger', section: 'texting' },
 ];
 
 export default function Mixer() {
@@ -104,6 +156,7 @@ export default function Mixer() {
 
   const vibes = allIngredients.filter(i => i.section === 'vibes');
   const characters = allIngredients.filter(i => i.section === 'characters');
+  const texting = allIngredients.filter(i => i.section === 'texting');
 
   const toggleIngredient = (item: Ingredient) => {
     const exists = selected.find(s => s.id === item.id);
@@ -204,24 +257,24 @@ Output ONLY the message text. No quotes. Be creative, funny, and authentic - som
         )}
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
             <span style={{ color: '#666', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>vibes</span>
             <span style={{ color: '#444', fontSize: 10 }}>scroll →</span>
           </div>
           <div style={{ position: 'relative' }}>
-            <div style={{ display: 'grid', gridTemplateRows: 'repeat(2, 1fr)', gridAutoFlow: 'column', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
               {vibes.map(item => (
                 <button
                   key={item.id}
                   onClick={() => toggleIngredient(item)}
                   style={{
-                    width: 76, height: 76, flexShrink: 0, borderRadius: 14, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
+                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
                   }}
                 >
-                  <span style={{ fontSize: 26 }}>{item.emoji}</span>
-                  <span style={{ fontSize: 10, color: '#888' }}>{item.name}</span>
+                  <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  <span style={{ fontSize: 11, color: '#888' }}>{item.name}</span>
                 </button>
               ))}
             </div>
@@ -230,22 +283,46 @@ Output ONLY the message text. No quotes. Be creative, funny, and authentic - som
         </div>
 
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
             <span style={{ color: '#666', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>characters</span>
             <span style={{ color: '#444', fontSize: 10 }}>scroll →</span>
           </div>
           <div style={{ position: 'relative' }}>
-            <div style={{ display: 'grid', gridTemplateRows: 'repeat(2, 1fr)', gridAutoFlow: 'column', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
               {characters.map(item => (
                 <button
                   key={item.id}
                   onClick={() => toggleIngredient(item)}
                   style={{
-                    width: 76, height: 76, flexShrink: 0, borderRadius: 14, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
+                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
                   }}
                 >
-                  <span style={{ fontSize: 26 }}>{item.emoji}</span>
-                  <span style={{ fontSize: 10, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 68 }}>{item.name}</span>
+                  <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 80 }}>{item.name}</span>
+                </button>
+              ))}
+            </div>
+            <div style={{ position: 'absolute', right: 0, top: 0, bottom: 4, width: 40, background: 'linear-gradient(to right, transparent, #000)', pointerEvents: 'none' }} />
+          </div>
+        </div>
+
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <span style={{ color: '#666', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>texting</span>
+            <span style={{ color: '#444', fontSize: 10 }}>scroll →</span>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
+              {texting.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => toggleIngredient(item)}
+                  style={{
+                    width: 88, height: 88, flexShrink: 0, borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: 'pointer', border: selected.find(s => s.id === item.id) ? '2px solid #fff' : '2px solid transparent', background: selected.find(s => s.id === item.id) ? '#2a2a2a' : '#1a1a1a', transition: 'all 0.15s'
+                  }}
+                >
+                  <span style={{ fontSize: 32 }}>{item.emoji}</span>
+                  <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 80 }}>{item.name}</span>
                 </button>
               ))}
             </div>
