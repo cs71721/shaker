@@ -1138,31 +1138,6 @@ Output valid JSON only:
         }}
         className="hide-scrollbar"
       >
-        {/* Header */}
-        <div className="card-row" style={{
-          textAlign: 'center',
-          marginBottom: 20,
-          paddingTop: 8,
-          opacity: 0,
-        }}>
-          <h1 style={{
-            fontSize: 32,
-            fontWeight: 'normal',
-            margin: 0,
-            letterSpacing: 4,
-            color: '#fff',
-          }}>
-            SHAKER
-          </h1>
-          <p style={{
-            fontSize: 14,
-            color: '#555',
-            margin: '6px 0 0 0',
-          }}>
-            pick a vibe + who you're texting →
-          </p>
-        </div>
-
         {recentIngredients.length > 0 && (
           <CardRow title="recent" items={recentIngredients} onCardClick={handleCardClick} selectedIds={selectedIds} />
         )}
@@ -1254,7 +1229,7 @@ Output valid JSON only:
             onSelect={handleSelect}
             onClick={handleSelect}
             placeholder={placeholder}
-            rows={1}
+            rows={2}
             disabled={isLoading}
             style={{
               flex: 1,
@@ -1262,18 +1237,18 @@ Output valid JSON only:
               border: isLoading ? '2px solid #222' : '2px solid #444',
               borderRadius: 12,
               color: isLoading ? '#666' : '#fff',
-              paddingTop: 14,
-              paddingBottom: 10,
+              paddingTop: 12,
+              paddingBottom: 12,
               paddingLeft: 12,
               paddingRight: 12,
               fontSize: 16,
               fontFamily: "'VT323', monospace",
               resize: 'none',
               outline: 'none',
-              minHeight: 48,
+              minHeight: 64,
               maxHeight: 120,
               transition: 'all 0.2s',
-              lineHeight: 1.3,
+              lineHeight: 1.4,
             }}
           />
           <button
