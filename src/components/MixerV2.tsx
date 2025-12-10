@@ -720,6 +720,9 @@ function CardRow({
 // MAIN COMPONENT
 // ============================================================================
 
+// localStorage key for recent ingredients
+const RECENT_STORAGE_KEY = 'shaker-recent-ingredients';
+
 export default function MixerV2() {
   const [inputText, setInputText] = useState('');
   const [results, setResults] = useState<{ tiny: string; short: string; medium: string; long: string; xl: string } | null>(null);
@@ -731,12 +734,48 @@ export default function MixerV2() {
   const [cardsVisible, setCardsVisible] = useState(true);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [autocompleteIndex, setAutocompleteIndex] = useState(0);
+  const [recentIngredientIds, setRecentIngredientIds] = useState<string[]>([]);
   const [placeholder] = useState(() =>
     placeholderPrompts[Math.floor(Math.random() * placeholderPrompts.length)]
   );
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const resultCardRef = useRef<HTMLDivElement>(null);
+
+  // Load recent ingredients from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(RECENT_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setRecentIngredientIds(parsed);
+        }
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, []);
+
+  // Save recent ingredients to localStorage
+  const trackIngredientUsage = (ingredients: Ingredient[]) => {
+    const newIds = ingredients.map(i => i.id);
+    setRecentIngredientIds(prev => {
+      // Add new ingredients at the start, remove duplicates, keep last 8
+      const updated = [...new Set([...newIds, ...prev])].slice(0, 8);
+      try {
+        localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(updated));
+      } catch {
+        // Ignore localStorage errors
+      }
+      return updated;
+    });
+  };
+
+  // Get recent ingredients as Ingredient objects
+  const recentIngredients = recentIngredientIds
+    .map(id => allIngredients.find(i => i.id === id))
+    .filter((i): i is Ingredient => i !== undefined);
 
   // Parse current input for hashtags
   const { message, validIngredients } = parseHashtags(inputText);
@@ -879,6 +918,7 @@ export default function MixerV2() {
     if (!message.trim() || validIngredients.length === 0) return;
 
     haptic([50, 30, 50, 30, 50]);
+    trackIngredientUsage(validIngredients);
     setCardsVisible(false);
     setIsLoading(true);
     setShowResult(true);
@@ -1052,6 +1092,9 @@ Output valid JSON only:
         }}
         className="hide-scrollbar"
       >
+        {recentIngredients.length > 0 && (
+          <CardRow title="recent" items={recentIngredients} onCardClick={handleCardClick} selectedIds={selectedIds} />
+        )}
         <CardRow title="vibes" items={vibes} onCardClick={handleCardClick} selectedIds={selectedIds} />
         <CardRow title="texting" items={texting} onCardClick={handleCardClick} selectedIds={selectedIds} />
         <CardRow title="characters" items={characters} onCardClick={handleCardClick} selectedIds={selectedIds} />
