@@ -1196,9 +1196,10 @@ Output valid JSON only:
               fontFamily: "'VT323', monospace",
               resize: 'none',
               outline: 'none',
-              minHeight: 44,
+              minHeight: 52,
               maxHeight: 120,
               transition: 'all 0.2s',
+              lineHeight: 1.3,
             }}
           />
           <button
