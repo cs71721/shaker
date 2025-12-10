@@ -183,9 +183,10 @@ const shareAsImage = async () => {
 };
 ```
 
-### 4.4 Like/Heart Feature ❌ NOT STARTED
-- Tap heart → fill animation
-- Store liked results in localStorage
+### 4.4 Like/Heart Feature ✅ COMPLETE
+- Tap heart → toggle ♡ ↔ ♥ with pop animation
+- Store liked results in localStorage (up to 50)
+- Red color (#ff6b6b) when liked
 - Future: could show "your favorites" section
 
 ### 4.5 Haptic Feedback ✅
@@ -225,11 +226,11 @@ Already implemented from v1:
 - [x] Ingredient pills at card bottom
 - [x] Action button placeholders (share, heart, close)
 
-### Phase 4: Polish 🔄
+### Phase 4: Polish ✅ MOSTLY COMPLETE
 - [x] **Recent ingredients row** (localStorage tracking) ✅
 - [ ] **Popular ingredients row** (usage analytics)
 - [x] **Share as image** (html2canvas integration) ✅
-- [ ] **Heart/like functionality** (localStorage + animation)
+- [x] **Heart/like functionality** (localStorage + animation) ✅
 - [x] Haptic feedback (carried from v1)
 - [x] Edge case handling (fuzzy matching)
 - [x] **All ingredient verbs** (100+ custom "-ing" verbs) ✅
@@ -243,7 +244,7 @@ Already implemented from v1:
 2. ~~**Share as Image**~~ ✅ COMPLETE - Captures result card, shares via Web Share API or downloads
 
 ### Priority 2: Engagement
-3. **Like/Heart Feature** - Save favorites to localStorage, animate heart fill
+3. ~~**Like/Heart Feature**~~ ✅ COMPLETE - Toggle heart, pop animation, localStorage persistence
 
 ### Priority 3: Nice to Have
 4. ~~**More ingredient verbs**~~ ✅ Added custom "-ing" verbs for all 100+ ingredients
