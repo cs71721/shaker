@@ -226,7 +226,7 @@ Already implemented from v1:
 - [x] Action button placeholders (share, heart, close)
 
 ### Phase 4: Polish 🔄
-- [ ] **Recent ingredients row** (localStorage tracking)
+- [x] **Recent ingredients row** (localStorage tracking) ✅
 - [ ] **Popular ingredients row** (usage analytics)
 - [x] **Share as image** (html2canvas integration) ✅
 - [ ] **Heart/like functionality** (localStorage + animation)
@@ -239,7 +239,7 @@ Already implemented from v1:
 ## Outstanding Work
 
 ### Priority 1: Core Features
-1. **Recent & Popular Row** - Track usage in localStorage, show top/recent ingredients
+1. ~~**Recent & Popular Row**~~ ✅ Recent row complete - Track usage in localStorage, show recent ingredients at top
 2. ~~**Share as Image**~~ ✅ COMPLETE - Captures result card, shares via Web Share API or downloads
 
 ### Priority 2: Engagement
