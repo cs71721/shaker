@@ -599,6 +599,7 @@ function PixelCard({
   return (
     <button
       onClick={onClick}
+      className="pixel-card"
       style={{
         width: s.width,
         height: s.height,
@@ -615,6 +616,7 @@ function PixelCard({
         transition: 'all 0.15s',
         position: 'relative',
         padding: 4,
+        boxShadow: selected ? '0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1)' : 'none',
       }}
     >
       {item.image ? (
@@ -1159,6 +1161,7 @@ Output valid JSON only:
           <button
             onClick={doShake}
             disabled={!isReady || isLoading}
+            className={isReady && !isLoading ? 'send-button-pulse' : ''}
             style={{
               width: 48,
               height: 48,
@@ -1248,6 +1251,7 @@ Output valid JSON only:
                 <div
                   ref={resultCardRef}
                   onClick={copyResult}
+                  className="result-card-animate"
                   style={{
                     width: '100%',
                     aspectRatio: '2.5 / 3.5',
@@ -1259,6 +1263,7 @@ Output valid JSON only:
                     flexDirection: 'column',
                     cursor: 'pointer',
                     overflow: 'hidden',
+                    boxShadow: '0 0 30px rgba(255, 255, 255, 0.15)',
                   }}
                 >
                   {/* Size selector at top */}
@@ -1337,41 +1342,56 @@ Output valid JSON only:
                   </div>
                 </div>
 
-                {/* Action buttons */}
-                <div style={{ display: 'flex', gap: 32 }}>
+                {/* Action buttons - pixel-art style */}
+                <div style={{ display: 'flex', gap: 24 }}>
                   <button
                     onClick={shareAsImage}
+                    className="pixel-card"
                     style={{
-                      background: 'none',
-                      border: 'none',
+                      background: '#111',
+                      border: '2px solid #444',
+                      borderRadius: 8,
                       color: '#fff',
-                      fontSize: 12,
+                      fontSize: 14,
+                      padding: '8px 16px',
                       cursor: 'pointer',
                       fontFamily: "'VT323', monospace",
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
                     }}
                   >
-                    share
+                    <span style={{ fontSize: 16 }}>↗</span> share
                   </button>
                   <button
                     onClick={doShake}
+                    className="pixel-card"
                     style={{
-                      background: 'none',
-                      border: 'none',
+                      background: '#111',
+                      border: '2px solid #444',
+                      borderRadius: 8,
                       color: '#fff',
-                      fontSize: 12,
+                      fontSize: 14,
+                      padding: '8px 16px',
                       cursor: 'pointer',
                       fontFamily: "'VT323', monospace",
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
                     }}
                   >
-                    remix
+                    <span style={{ fontSize: 16 }}>↻</span> remix
                   </button>
                   <button
                     onClick={() => {/* TODO: like */}}
+                    className="pixel-card"
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#666',
-                      fontSize: 16,
+                      background: '#111',
+                      border: '2px solid #444',
+                      borderRadius: 8,
+                      color: '#888',
+                      fontSize: 18,
+                      padding: '6px 12px',
                       cursor: 'pointer',
                     }}
                   >
@@ -1379,16 +1399,18 @@ Output valid JSON only:
                   </button>
                   <button
                     onClick={closeResult}
+                    className="pixel-card"
                     style={{
-                      background: 'none',
-                      border: 'none',
+                      background: '#111',
+                      border: '2px solid #444',
+                      borderRadius: 8,
                       color: '#666',
-                      fontSize: 12,
+                      fontSize: 18,
+                      padding: '6px 12px',
                       cursor: 'pointer',
-                      fontFamily: "'VT323', monospace",
                     }}
                   >
-                    close
+                    ✕
                   </button>
                 </div>
               </>
@@ -1397,11 +1419,71 @@ Output valid JSON only:
         </div>
       )}
 
+      {/* CRT Scanlines Overlay */}
+      <div className="crt-scanlines" aria-hidden="true" />
+
       {/* Global Styles */}
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-8px); }
+        }
+
+        @keyframes popIn {
+          0% {
+            transform: scale(0.8);
+            opacity: 0;
+          }
+          50% {
+            transform: scale(1.02);
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+          }
+          50% {
+            box-shadow: 0 0 20px 4px rgba(255, 255, 255, 0.2);
+          }
+        }
+
+        @keyframes scanline {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(4px); }
+        }
+
+        .pixel-card:active {
+          transform: scale(0.95) !important;
+        }
+
+        .result-card-animate {
+          animation: popIn 0.3s ease-out forwards;
+        }
+
+        .send-button-pulse {
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        .crt-scanlines {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          pointer-events: none;
+          z-index: 1000;
+          background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.03) 0px,
+            rgba(0, 0, 0, 0.03) 1px,
+            transparent 1px,
+            transparent 2px
+          );
         }
 
         .hide-scrollbar::-webkit-scrollbar {
