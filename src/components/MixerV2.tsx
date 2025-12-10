@@ -1075,10 +1075,13 @@ Output valid JSON only:
 
     haptic(50);
 
+    // Hide CRT scanlines during capture
+    const scanlines = document.querySelector('.crt-scanlines') as HTMLElement;
+    if (scanlines) scanlines.style.opacity = '0';
+
     try {
-      // Hide CRT scanlines during capture
-      const scanlines = document.querySelector('.crt-scanlines') as HTMLElement;
-      if (scanlines) scanlines.style.display = 'none';
+      // Small delay to ensure scanlines are hidden
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       // Capture the result card as canvas
       const canvas = await html2canvas(resultCardRef.current, {
@@ -1086,10 +1089,8 @@ Output valid JSON only:
         scale: 2, // Higher quality
         useCORS: true,
         logging: false,
+        ignoreElements: (element) => element.classList.contains('crt-scanlines'),
       });
-
-      // Restore CRT scanlines
-      if (scanlines) scanlines.style.display = '';
 
       // Convert to blob
       const blob = await new Promise<Blob | null>((resolve) => {
@@ -1121,9 +1122,10 @@ Output valid JSON only:
       }
     } catch (error) {
       console.error('Share failed:', error);
-      // Restore CRT scanlines on error
+    } finally {
+      // Always restore CRT scanlines
       const scanlines = document.querySelector('.crt-scanlines') as HTMLElement;
-      if (scanlines) scanlines.style.display = '';
+      if (scanlines) scanlines.style.opacity = '';
     }
   };
 
@@ -1324,9 +1326,8 @@ Output valid JSON only:
             {isLoading ? (
               // Loading State
               <div style={{
-                width: '100%',
-                aspectRatio: '2.5 / 3.5',
-                maxHeight: '60vh',
+                width: 280,
+                height: 392, // 280 * (3.5 / 2.5) = 392 - maintains poker card ratio
                 border: '3px solid #444',
                 borderRadius: 16,
                 background: '#000',
@@ -1370,9 +1371,8 @@ Output valid JSON only:
                   onClick={copyResult}
                   className="result-card-animate"
                   style={{
-                    width: '100%',
-                    aspectRatio: '2.5 / 3.5',
-                    maxHeight: '60vh',
+                    width: 280,
+                    height: 392, // 280 * (3.5 / 2.5) = 392 - maintains poker card ratio
                     border: '3px solid #fff',
                     borderRadius: 16,
                     background: '#000',
