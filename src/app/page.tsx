@@ -1,5 +1,5 @@
-import Mixer from '@/components/Mixer';
+import MixerV2 from '@/components/MixerV2';
 
 export default function Home() {
-  return <Mixer />;
+  return <MixerV2 />;
 }
