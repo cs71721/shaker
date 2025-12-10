@@ -301,6 +301,31 @@ function parseHashtags(text: string): { message: string; tags: string[]; validIn
   return { message, tags, validIngredients };
 }
 
+// Levenshtein distance for fuzzy matching
+function levenshtein(a: string, b: string): number {
+  const matrix: number[][] = [];
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
 // Fuzzy match ingredient by id or name
 function findBestMatch(tag: string): Ingredient | null {
   const normalizedTag = tag.toLowerCase();
@@ -319,7 +344,94 @@ function findBestMatch(tag: string): Ingredient | null {
   );
   if (startsWith) return startsWith;
 
+  // Levenshtein distance match (for typos) - only for tags >= 3 chars
+  if (normalizedTag.length >= 3) {
+    const fuzzyMatch = allIngredients.find(i =>
+      levenshtein(i.id, normalizedTag) <= 2 ||
+      levenshtein(i.name.toLowerCase(), normalizedTag) <= 2
+    );
+    if (fuzzyMatch) return fuzzyMatch;
+  }
+
   return null;
+}
+
+// Get autocomplete suggestions for partial hashtag
+function getAutocompleteSuggestions(partial: string, limit = 5): Ingredient[] {
+  if (!partial || partial.length === 0) return [];
+
+  const normalizedPartial = partial.toLowerCase();
+
+  // Score each ingredient
+  const scored = allIngredients.map(item => {
+    const id = item.id.toLowerCase();
+    const name = item.name.toLowerCase();
+
+    let score = 100; // Lower is better
+
+    // Exact match
+    if (id === normalizedPartial || name === normalizedPartial) {
+      score = 0;
+    }
+    // Starts with
+    else if (id.startsWith(normalizedPartial)) {
+      score = 10;
+    }
+    else if (name.startsWith(normalizedPartial)) {
+      score = 15;
+    }
+    // Contains
+    else if (id.includes(normalizedPartial)) {
+      score = 30;
+    }
+    else if (name.includes(normalizedPartial)) {
+      score = 35;
+    }
+    // Levenshtein for typos
+    else {
+      const idDist = levenshtein(id, normalizedPartial);
+      const nameDist = levenshtein(name, normalizedPartial);
+      const minDist = Math.min(idDist, nameDist);
+      if (minDist <= 2) {
+        score = 50 + minDist * 10;
+      }
+    }
+
+    return { item, score };
+  });
+
+  return scored
+    .filter(s => s.score < 100)
+    .sort((a, b) => a.score - b.score)
+    .slice(0, limit)
+    .map(s => s.item);
+}
+
+// Get current hashtag being typed (if any)
+function getCurrentHashtag(text: string, cursorPosition: number): { partial: string; start: number; end: number } | null {
+  // Find the hashtag at cursor position
+  const beforeCursor = text.slice(0, cursorPosition);
+  const afterCursor = text.slice(cursorPosition);
+
+  // Find last # before cursor
+  const hashIndex = beforeCursor.lastIndexOf('#');
+  if (hashIndex === -1) return null;
+
+  // Get text between # and cursor
+  const partialBeforeCursor = beforeCursor.slice(hashIndex + 1);
+
+  // Check if we're still in the hashtag (no spaces between # and cursor)
+  if (/\s/.test(partialBeforeCursor)) return null;
+
+  // Get rest of hashtag after cursor (until space or end)
+  const afterMatch = afterCursor.match(/^(\w*)/);
+  const partialAfterCursor = afterMatch ? afterMatch[1] : '';
+
+  return {
+    partial: partialBeforeCursor + partialAfterCursor,
+    start: hashIndex,
+    end: cursorPosition + partialAfterCursor.length,
+  };
 }
 
 // Get loading verbs for selected ingredients
@@ -496,6 +608,8 @@ export default function MixerV2() {
   const [copied, setCopied] = useState(false);
   const [loadingVerbIndex, setLoadingVerbIndex] = useState(0);
   const [cardsVisible, setCardsVisible] = useState(true);
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const [autocompleteIndex, setAutocompleteIndex] = useState(0);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -503,6 +617,13 @@ export default function MixerV2() {
   const { message, validIngredients } = parseHashtags(inputText);
   const selectedIds = validIngredients.map(i => i.id);
   const loadingVerbs = getLoadingVerbs(validIngredients);
+
+  // Autocomplete logic
+  const currentHashtag = getCurrentHashtag(inputText, cursorPosition);
+  const autocompleteSuggestions = currentHashtag
+    ? getAutocompleteSuggestions(currentHashtag.partial)
+    : [];
+  const showAutocomplete = autocompleteSuggestions.length > 0;
 
   // Filter ingredients by section
   const vibes = allIngredients.filter(i => i.section === 'vibes');
@@ -534,6 +655,73 @@ export default function MixerV2() {
 
     return () => clearInterval(interval);
   }, [isLoading, loadingVerbs.length]);
+
+  // Reset autocomplete index when suggestions change
+  useEffect(() => {
+    setAutocompleteIndex(0);
+  }, [autocompleteSuggestions.length]);
+
+  // Handle autocomplete selection
+  const selectAutocomplete = (item: Ingredient) => {
+    if (!currentHashtag) return;
+
+    haptic(10);
+
+    // Replace the partial hashtag with the full one
+    const before = inputText.slice(0, currentHashtag.start);
+    const after = inputText.slice(currentHashtag.end);
+    const newText = before + '#' + item.id + ' ' + after;
+
+    setInputText(newText.replace(/\s+/g, ' '));
+
+    // Move cursor after the inserted hashtag
+    const newCursorPos = currentHashtag.start + item.id.length + 2;
+    setCursorPosition(newCursorPos);
+
+    // Focus textarea and set cursor
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  };
+
+  // Handle keyboard for autocomplete
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showAutocomplete) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setAutocompleteIndex(prev =>
+        prev < autocompleteSuggestions.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setAutocompleteIndex(prev => (prev > 0 ? prev - 1 : prev));
+    } else if (e.key === 'Enter' && autocompleteSuggestions[autocompleteIndex]) {
+      e.preventDefault();
+      selectAutocomplete(autocompleteSuggestions[autocompleteIndex]);
+    } else if (e.key === 'Escape') {
+      // Clear autocomplete by moving cursor
+      setCursorPosition(0);
+    } else if (e.key === 'Tab' && autocompleteSuggestions[0]) {
+      e.preventDefault();
+      selectAutocomplete(autocompleteSuggestions[0]);
+    }
+  };
+
+  // Handle input change with cursor tracking
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputText(e.target.value);
+    setCursorPosition(e.target.selectionStart || 0);
+  };
+
+  // Handle cursor movement
+  const handleSelect = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+    const target = e.target as HTMLTextAreaElement;
+    setCursorPosition(target.selectionStart || 0);
+  };
 
   // Handle card click - add hashtag to input
   const handleCardClick = (item: Ingredient) => {
@@ -706,11 +894,67 @@ Rules for ALL versions:
           maxWidth: 400,
           margin: '0 auto',
           alignItems: 'flex-end',
+          position: 'relative',
         }}>
+          {/* Autocomplete Dropdown */}
+          {showAutocomplete && (
+            <div style={{
+              position: 'absolute',
+              bottom: '100%',
+              left: 0,
+              right: 60,
+              marginBottom: 8,
+              background: '#111',
+              border: '2px solid #444',
+              borderRadius: 12,
+              overflow: 'hidden',
+              zIndex: 50,
+            }}>
+              {autocompleteSuggestions.map((item, index) => (
+                <button
+                  key={item.id}
+                  onClick={() => selectAutocomplete(item)}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '10px 14px',
+                    background: index === autocompleteIndex ? '#2a2a2a' : 'transparent',
+                    border: 'none',
+                    borderBottom: index < autocompleteSuggestions.length - 1 ? '1px solid #333' : 'none',
+                    color: '#fff',
+                    fontSize: 14,
+                    fontFamily: "'VT323', monospace",
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'background 0.1s',
+                  }}
+                  onMouseEnter={() => setAutocompleteIndex(index)}
+                >
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      style={{ width: 24, height: 24, borderRadius: 4, objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: 18 }}>{item.emoji}</span>
+                  )}
+                  <span style={{ flex: 1 }}>#{item.id}</span>
+                  <span style={{ color: '#666', fontSize: 12 }}>{item.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
           <textarea
             ref={textareaRef}
             value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onSelect={handleSelect}
+            onClick={handleSelect}
             placeholder="what do you need to say?&#10;#chill #wednesday"
             rows={1}
             disabled={isLoading}
