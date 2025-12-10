@@ -358,9 +358,9 @@ function PixelCard({
   size?: 'sm' | 'md' | 'lg';
 }) {
   const sizes = {
-    sm: { width: 50, height: 70, fontSize: 20, textSize: 8 },
-    md: { width: 70, height: 98, fontSize: 28, textSize: 10 },
-    lg: { width: 100, height: 140, fontSize: 40, textSize: 12 },
+    sm: { width: 60, height: 84, fontSize: 24, textSize: 11 },
+    md: { width: 80, height: 112, fontSize: 32, textSize: 13 },
+    lg: { width: 110, height: 154, fontSize: 44, textSize: 15 },
   };
 
   const s = sizes[size];
@@ -374,6 +374,7 @@ function PixelCard({
         flexShrink: 0,
         background: '#000',
         border: selected ? '3px solid #fff' : '2px solid #444',
+        borderRadius: 12,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -383,10 +384,6 @@ function PixelCard({
         transition: 'all 0.15s',
         position: 'relative',
         padding: 4,
-        // Pixel art border effect
-        boxShadow: selected
-          ? '0 0 0 1px #000, inset 0 0 0 1px rgba(255,255,255,0.1)'
-          : 'none',
       }}
     >
       {item.image ? (
@@ -411,7 +408,7 @@ function PixelCard({
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           maxWidth: s.width - 8,
-          fontFamily: "'Silkscreen', cursive",
+          fontFamily: "'VT323', monospace",
         }}
       >
         {item.name}
@@ -446,7 +443,7 @@ function CardRow({
           fontSize: 10,
           textTransform: 'uppercase',
           letterSpacing: 2,
-          fontFamily: "'Silkscreen', cursive",
+          fontFamily: "'VT323', monospace",
         }}>
           {title}
         </span>
@@ -666,7 +663,7 @@ Rules for ALL versions:
       color: '#fff',
       display: 'flex',
       flexDirection: 'column',
-      fontFamily: "'Silkscreen', cursive",
+      fontFamily: "'VT323', monospace",
       overflow: 'hidden',
     }}>
       {/* Card Rows - Scrollable Area */}
@@ -721,10 +718,11 @@ Rules for ALL versions:
               flex: 1,
               background: isLoading ? '#0a0a0a' : '#111',
               border: isLoading ? '2px solid #222' : '2px solid #444',
+              borderRadius: 12,
               color: isLoading ? '#666' : '#fff',
               padding: 12,
-              fontSize: 14,
-              fontFamily: "'Silkscreen', cursive",
+              fontSize: 16,
+              fontFamily: "'VT323', monospace",
               resize: 'none',
               outline: 'none',
               minHeight: 44,
@@ -741,6 +739,7 @@ Rules for ALL versions:
               background: isReady ? '#fff' : '#333',
               border: '2px solid',
               borderColor: isReady ? '#fff' : '#444',
+              borderRadius: 12,
               color: isReady ? '#000' : '#666',
               fontSize: 20,
               cursor: isReady ? 'pointer' : 'not-allowed',
@@ -783,6 +782,7 @@ Rules for ALL versions:
                 aspectRatio: '2.5 / 3.5',
                 maxHeight: '60vh',
                 border: '3px solid #444',
+                borderRadius: 16,
                 background: '#000',
                 display: 'flex',
                 flexDirection: 'column',
@@ -826,6 +826,7 @@ Rules for ALL versions:
                     aspectRatio: '2.5 / 3.5',
                     maxHeight: '60vh',
                     border: '3px solid #fff',
+                    borderRadius: 16,
                     background: '#000',
                     display: 'flex',
                     flexDirection: 'column',
@@ -840,6 +841,7 @@ Rules for ALL versions:
                     gap: 4,
                     padding: 12,
                     borderBottom: '2px solid #333',
+                    flexShrink: 0,
                   }}>
                     {sizes.map(size => (
                       <button
@@ -848,10 +850,11 @@ Rules for ALL versions:
                         style={{
                           padding: '6px 10px',
                           border: selectedSize === size ? '2px solid #fff' : '2px solid #444',
+                          borderRadius: 8,
                           background: selectedSize === size ? '#fff' : '#000',
                           color: selectedSize === size ? '#000' : '#666',
-                          fontSize: 10,
-                          fontFamily: "'Silkscreen', cursive",
+                          fontSize: 14,
+                          fontFamily: "'VT323', monospace",
                           cursor: 'pointer',
                         }}
                       >
@@ -860,7 +863,7 @@ Rules for ALL versions:
                     ))}
                   </div>
 
-                  {/* Result text */}
+                  {/* Result text - scrollable for long content */}
                   <div style={{
                     flex: 1,
                     display: 'flex',
@@ -869,9 +872,11 @@ Rules for ALL versions:
                     alignItems: 'center',
                     padding: 20,
                     textAlign: 'center',
+                    overflowY: 'auto',
+                    minHeight: 0,
                   }}>
                     <p style={{
-                      fontSize: selectedSize === 'xl' ? 12 : selectedSize === 'long' ? 13 : 14,
+                      fontSize: selectedSize === 'xl' ? 14 : selectedSize === 'long' ? 15 : 16,
                       lineHeight: 1.6,
                       margin: 0,
                     }}>
@@ -879,8 +884,9 @@ Rules for ALL versions:
                     </p>
                     <p style={{
                       color: copied ? '#4ade80' : '#666',
-                      fontSize: 10,
+                      fontSize: 12,
                       marginTop: 12,
+                      flexShrink: 0,
                     }}>
                       {copied ? '✓ copied!' : 'tap to copy'}
                     </p>
@@ -894,9 +900,10 @@ Rules for ALL versions:
                     padding: 12,
                     borderTop: '2px solid #333',
                     flexWrap: 'wrap',
+                    flexShrink: 0,
                   }}>
                     {validIngredients.slice(0, 3).map(item => (
-                      <span key={item.id} style={{ fontSize: 10, color: '#666' }}>
+                      <span key={item.id} style={{ fontSize: 12, color: '#666' }}>
                         {item.emoji} {item.name}
                       </span>
                     ))}
@@ -913,7 +920,7 @@ Rules for ALL versions:
                       color: '#fff',
                       fontSize: 12,
                       cursor: 'pointer',
-                      fontFamily: "'Silkscreen', cursive",
+                      fontFamily: "'VT323', monospace",
                     }}
                   >
                     share
@@ -938,7 +945,7 @@ Rules for ALL versions:
                       color: '#666',
                       fontSize: 12,
                       cursor: 'pointer',
-                      fontFamily: "'Silkscreen', cursive",
+                      fontFamily: "'VT323', monospace",
                     }}
                   >
                     close
