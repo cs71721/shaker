@@ -1386,7 +1386,7 @@ Output valid JSON only:
                 </div>
 
                 {/* Action buttons - pixel-art style */}
-                <div style={{ display: 'flex', gap: 24 }}>
+                <div style={{ display: 'flex', gap: 16 }}>
                   <button
                     onClick={shareAsImage}
                     className="pixel-card"
@@ -1395,16 +1395,12 @@ Output valid JSON only:
                       border: '2px solid #444',
                       borderRadius: 8,
                       color: '#fff',
-                      fontSize: 14,
-                      padding: '8px 16px',
+                      fontSize: 20,
+                      padding: '8px 14px',
                       cursor: 'pointer',
-                      fontFamily: "'VT323', monospace",
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
                     }}
                   >
-                    <span style={{ fontSize: 16 }}>↗</span> share
+                    ↗
                   </button>
                   <button
                     onClick={doShake}
@@ -1414,16 +1410,12 @@ Output valid JSON only:
                       border: '2px solid #444',
                       borderRadius: 8,
                       color: '#fff',
-                      fontSize: 14,
-                      padding: '8px 16px',
+                      fontSize: 20,
+                      padding: '8px 14px',
                       cursor: 'pointer',
-                      fontFamily: "'VT323', monospace",
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
                     }}
                   >
-                    <span style={{ fontSize: 16 }}>↻</span> remix
+                    ↻
                   </button>
                   <button
                     onClick={() => {/* TODO: like */}}
@@ -1433,8 +1425,8 @@ Output valid JSON only:
                       border: '2px solid #444',
                       borderRadius: 8,
                       color: '#888',
-                      fontSize: 18,
-                      padding: '6px 12px',
+                      fontSize: 20,
+                      padding: '8px 14px',
                       cursor: 'pointer',
                     }}
                   >
@@ -1448,8 +1440,8 @@ Output valid JSON only:
                       border: '2px solid #444',
                       borderRadius: 8,
                       color: '#666',
-                      fontSize: 18,
-                      padding: '6px 12px',
+                      fontSize: 20,
+                      padding: '8px 14px',
                       cursor: 'pointer',
                     }}
                   >
