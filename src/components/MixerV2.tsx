@@ -1076,6 +1076,10 @@ Output valid JSON only:
     haptic(50);
 
     try {
+      // Hide CRT scanlines during capture
+      const scanlines = document.querySelector('.crt-scanlines') as HTMLElement;
+      if (scanlines) scanlines.style.display = 'none';
+
       // Capture the result card as canvas
       const canvas = await html2canvas(resultCardRef.current, {
         backgroundColor: '#000',
@@ -1083,6 +1087,9 @@ Output valid JSON only:
         useCORS: true,
         logging: false,
       });
+
+      // Restore CRT scanlines
+      if (scanlines) scanlines.style.display = '';
 
       // Convert to blob
       const blob = await new Promise<Blob | null>((resolve) => {
@@ -1114,6 +1121,9 @@ Output valid JSON only:
       }
     } catch (error) {
       console.error('Share failed:', error);
+      // Restore CRT scanlines on error
+      const scanlines = document.querySelector('.crt-scanlines') as HTMLElement;
+      if (scanlines) scanlines.style.display = '';
     }
   };
 
