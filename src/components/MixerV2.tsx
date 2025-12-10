@@ -720,8 +720,16 @@ function CardRow({
 // MAIN COMPONENT
 // ============================================================================
 
-// localStorage key for recent ingredients
+// localStorage keys
 const RECENT_STORAGE_KEY = 'shaker-recent-ingredients';
+const FAVORITES_STORAGE_KEY = 'shaker-favorites';
+
+interface FavoriteResult {
+  id: string;
+  text: string;
+  ingredientIds: string[];
+  timestamp: number;
+}
 
 export default function MixerV2() {
   const [inputText, setInputText] = useState('');
@@ -735,6 +743,7 @@ export default function MixerV2() {
   const [cursorPosition, setCursorPosition] = useState(0);
   const [autocompleteIndex, setAutocompleteIndex] = useState(0);
   const [recentIngredientIds, setRecentIngredientIds] = useState<string[]>([]);
+  const [isLiked, setIsLiked] = useState(false);
   const [placeholder] = useState(() =>
     placeholderPrompts[Math.floor(Math.random() * placeholderPrompts.length)]
   );
@@ -776,6 +785,42 @@ export default function MixerV2() {
   const recentIngredients = recentIngredientIds
     .map(id => allIngredients.find(i => i.id === id))
     .filter((i): i is Ingredient => i !== undefined);
+
+  // Toggle like for current result
+  const toggleLike = () => {
+    if (!results) return;
+
+    haptic(50);
+
+    const currentText = results[selectedSize];
+    const ingredientIds = validIngredients.map(i => i.id);
+
+    try {
+      const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
+      const favorites: FavoriteResult[] = stored ? JSON.parse(stored) : [];
+
+      if (isLiked) {
+        // Remove from favorites (match by text)
+        const updated = favorites.filter(f => f.text !== currentText);
+        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(updated));
+        setIsLiked(false);
+      } else {
+        // Add to favorites
+        const newFavorite: FavoriteResult = {
+          id: Date.now().toString(),
+          text: currentText,
+          ingredientIds,
+          timestamp: Date.now(),
+        };
+        const updated = [newFavorite, ...favorites].slice(0, 50); // Keep last 50
+        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(updated));
+        setIsLiked(true);
+      }
+    } catch {
+      // Ignore localStorage errors
+      setIsLiked(!isLiked);
+    }
+  };
 
   // Parse current input for hashtags
   const { message, validIngredients } = parseHashtags(inputText);
@@ -923,6 +968,7 @@ export default function MixerV2() {
     setIsLoading(true);
     setShowResult(true);
     setResults(null);
+    setIsLiked(false);
 
     // Build prompt
     const textingContext = validIngredients.find(i => i.section === 'texting');
@@ -1216,12 +1262,15 @@ Output valid JSON only:
               border: isLoading ? '2px solid #222' : '2px solid #444',
               borderRadius: 12,
               color: isLoading ? '#666' : '#fff',
-              padding: 12,
+              paddingTop: 14,
+              paddingBottom: 10,
+              paddingLeft: 12,
+              paddingRight: 12,
               fontSize: 16,
               fontFamily: "'VT323', monospace",
               resize: 'none',
               outline: 'none',
-              minHeight: 52,
+              minHeight: 48,
               maxHeight: 120,
               transition: 'all 0.2s',
               lineHeight: 1.3,
@@ -1369,16 +1418,17 @@ Output valid JSON only:
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'center',
+                    justifyContent: (selectedSize === 'xl' || selectedSize === 'long') ? 'flex-start' : 'center',
                     alignItems: 'center',
                     padding: 20,
+                    paddingTop: (selectedSize === 'xl' || selectedSize === 'long') ? 24 : 20,
                     textAlign: 'center',
                     overflowY: 'auto',
                     minHeight: 0,
                   }}>
                     <p style={{
-                      fontSize: selectedSize === 'xl' ? 14 : selectedSize === 'long' ? 15 : 16,
-                      lineHeight: 1.6,
+                      fontSize: 16,
+                      lineHeight: 1.7,
                       margin: 0,
                     }}>
                       &quot;{currentResult}&quot;
@@ -1386,7 +1436,7 @@ Output valid JSON only:
                     <p style={{
                       color: copied ? '#4ade80' : '#666',
                       fontSize: 12,
-                      marginTop: 12,
+                      marginTop: 16,
                       flexShrink: 0,
                     }}>
                       {copied ? '✓ copied!' : 'tap to copy'}
@@ -1444,19 +1494,20 @@ Output valid JSON only:
                     ↻
                   </button>
                   <button
-                    onClick={() => {/* TODO: like */}}
-                    className="pixel-card"
+                    onClick={toggleLike}
+                    className={`pixel-card ${isLiked ? 'heart-liked' : ''}`}
                     style={{
                       background: '#111',
-                      border: '2px solid #444',
+                      border: isLiked ? '2px solid #ff6b6b' : '2px solid #444',
                       borderRadius: 8,
-                      color: '#888',
+                      color: isLiked ? '#ff6b6b' : '#888',
                       fontSize: 20,
                       padding: '8px 14px',
                       cursor: 'pointer',
+                      transition: 'all 0.2s ease',
                     }}
                   >
-                    ♡
+                    {isLiked ? '♥' : '♡'}
                   </button>
                   <button
                     onClick={closeResult}
@@ -1528,6 +1579,16 @@ Output valid JSON only:
 
         .send-button-pulse {
           animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes heartPop {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.3); }
+          100% { transform: scale(1); }
+        }
+
+        .heart-liked {
+          animation: heartPop 0.3s ease-out;
         }
 
         .crt-scanlines {
