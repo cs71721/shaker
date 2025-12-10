@@ -589,9 +589,9 @@ function PixelCard({
   size?: 'sm' | 'md' | 'lg';
 }) {
   const sizes = {
-    sm: { width: 66, height: 92, fontSize: 26, textSize: 11 },
-    md: { width: 88, height: 123, fontSize: 36, textSize: 13 },
-    lg: { width: 120, height: 168, fontSize: 48, textSize: 15 },
+    sm: { width: 66, height: 92, fontSize: 26, textSize: 12 },
+    md: { width: 88, height: 123, fontSize: 36, textSize: 14 },
+    lg: { width: 120, height: 168, fontSize: 48, textSize: 16 },
   };
 
   const s = sizes[size];
@@ -610,29 +610,43 @@ function PixelCard({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: 4,
+        justifyContent: 'flex-end',
+        gap: 0,
         cursor: 'pointer',
         transition: 'all 0.15s',
         position: 'relative',
         padding: 4,
+        paddingBottom: 8,
         boxShadow: selected ? '0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1)' : 'none',
       }}
     >
-      {item.image ? (
-        <img
-          src={item.image}
-          alt={item.name}
-          style={{
-            width: s.fontSize + 8,
-            height: s.fontSize + 8,
-            objectFit: 'cover',
-            imageRendering: 'pixelated',
-          }}
-        />
-      ) : (
-        <span style={{ fontSize: s.fontSize, lineHeight: 1 }}>{item.emoji}</span>
-      )}
+      {/* Icon/emoji container - absolutely centered */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: s.textSize + 16,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        {item.image ? (
+          <img
+            src={item.image}
+            alt={item.name}
+            style={{
+              width: s.fontSize + 8,
+              height: s.fontSize + 8,
+              objectFit: 'cover',
+              imageRendering: 'pixelated',
+            }}
+          />
+        ) : (
+          <span style={{ fontSize: s.fontSize, lineHeight: 1 }}>{item.emoji}</span>
+        )}
+      </div>
+      {/* Text always at bottom */}
       <span
         style={{
           fontSize: s.textSize,
@@ -673,7 +687,7 @@ function CardRow({
       }}>
         <span style={{
           color: '#666',
-          fontSize: 10,
+          fontSize: 12,
           textTransform: 'uppercase',
           letterSpacing: 2,
           fontFamily: "'VT323', monospace",
@@ -1197,7 +1211,7 @@ Output valid JSON only:
                     border: 'none',
                     borderBottom: index < autocompleteSuggestions.length - 1 ? '1px solid #333' : 'none',
                     color: '#fff',
-                    fontSize: 14,
+                    fontSize: 16,
                     fontFamily: "'VT323', monospace",
                     cursor: 'pointer',
                     textAlign: 'left',
@@ -1241,11 +1255,11 @@ Output valid JSON only:
               paddingBottom: 12,
               paddingLeft: 12,
               paddingRight: 12,
-              fontSize: 16,
+              fontSize: 18,
               fontFamily: "'VT323', monospace",
               resize: 'none',
               outline: 'none',
-              minHeight: 64,
+              minHeight: 68,
               maxHeight: 120,
               transition: 'all 0.2s',
               lineHeight: 1.4,
@@ -1378,7 +1392,7 @@ Output valid JSON only:
                           borderRadius: 8,
                           background: selectedSize === size ? '#fff' : '#000',
                           color: selectedSize === size ? '#000' : '#666',
-                          fontSize: 14,
+                          fontSize: 16,
                           fontFamily: "'VT323', monospace",
                           cursor: 'pointer',
                         }}
@@ -1402,7 +1416,7 @@ Output valid JSON only:
                     minHeight: 0,
                   }}>
                     <p style={{
-                      fontSize: 16,
+                      fontSize: 18,
                       lineHeight: 1.7,
                       margin: 0,
                     }}>
@@ -1410,7 +1424,7 @@ Output valid JSON only:
                     </p>
                     <p style={{
                       color: copied ? '#4ade80' : '#666',
-                      fontSize: 12,
+                      fontSize: 14,
                       marginTop: 16,
                       flexShrink: 0,
                     }}>
@@ -1429,7 +1443,7 @@ Output valid JSON only:
                     flexShrink: 0,
                   }}>
                     {validIngredients.slice(0, 3).map(item => (
-                      <span key={item.id} style={{ fontSize: 12, color: '#666' }}>
+                      <span key={item.id} style={{ fontSize: 14, color: '#666' }}>
                         {item.emoji} {item.name}
                       </span>
                     ))}
@@ -1446,8 +1460,8 @@ Output valid JSON only:
                       border: '2px solid #444',
                       borderRadius: 8,
                       color: '#fff',
-                      fontSize: 20,
-                      padding: '8px 14px',
+                      fontSize: 22,
+                      padding: '8px 16px',
                       cursor: 'pointer',
                     }}
                   >
@@ -1461,8 +1475,8 @@ Output valid JSON only:
                       border: '2px solid #444',
                       borderRadius: 8,
                       color: '#fff',
-                      fontSize: 20,
-                      padding: '8px 14px',
+                      fontSize: 22,
+                      padding: '8px 16px',
                       cursor: 'pointer',
                     }}
                   >
@@ -1476,8 +1490,8 @@ Output valid JSON only:
                       border: isLiked ? '2px solid #ff6b6b' : '2px solid #444',
                       borderRadius: 8,
                       color: isLiked ? '#ff6b6b' : '#888',
-                      fontSize: 20,
-                      padding: '8px 14px',
+                      fontSize: 22,
+                      padding: '8px 16px',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                     }}
@@ -1492,8 +1506,8 @@ Output valid JSON only:
                       border: '2px solid #444',
                       borderRadius: 8,
                       color: '#666',
-                      fontSize: 20,
-                      padding: '8px 14px',
+                      fontSize: 22,
+                      padding: '8px 16px',
                       cursor: 'pointer',
                     }}
                   >
