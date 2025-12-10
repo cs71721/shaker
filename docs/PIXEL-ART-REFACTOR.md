@@ -171,10 +171,16 @@ const sizeLabels = { tiny: 'XS', short: 'S', medium: 'M', long: 'L', xl: 'XL' };
 ```
 Prompt updated for XL: "60-80 words"
 
-### 4.3 Share as Image ❌ NOT STARTED
-Requires `html2canvas`:
-```bash
-npm install html2canvas
+### 4.3 Share as Image ✅ COMPLETE
+Uses `html2canvas` to capture result card:
+```tsx
+const shareAsImage = async () => {
+  const canvas = await html2canvas(resultCardRef.current, {
+    backgroundColor: '#000',
+    scale: 2,
+  });
+  // Web Share API with file, or fallback to download
+};
 ```
 
 ### 4.4 Like/Heart Feature ❌ NOT STARTED
@@ -222,10 +228,11 @@ Already implemented from v1:
 ### Phase 4: Polish 🔄
 - [ ] **Recent ingredients row** (localStorage tracking)
 - [ ] **Popular ingredients row** (usage analytics)
-- [ ] **Share as image** (html2canvas integration)
+- [x] **Share as image** (html2canvas integration) ✅
 - [ ] **Heart/like functionality** (localStorage + animation)
 - [x] Haptic feedback (carried from v1)
 - [x] Edge case handling (fuzzy matching)
+- [x] **All ingredient verbs** (100+ custom "-ing" verbs) ✅
 
 ---
 
@@ -233,13 +240,13 @@ Already implemented from v1:
 
 ### Priority 1: Core Features
 1. **Recent & Popular Row** - Track usage in localStorage, show top/recent ingredients
-2. **Share as Image** - Install html2canvas, capture result card, share via Web Share API
+2. ~~**Share as Image**~~ ✅ COMPLETE - Captures result card, shares via Web Share API or downloads
 
 ### Priority 2: Engagement
 3. **Like/Heart Feature** - Save favorites to localStorage, animate heart fill
 
 ### Priority 3: Nice to Have
-4. **More ingredient verbs** - Add custom "-ing" verbs for all characters
+4. ~~**More ingredient verbs**~~ ✅ Added custom "-ing" verbs for all 100+ ingredients
 5. **Pixel art images** - Create pixel art for Brooklyn 99, Modern Family characters
 6. **Sound effects** - Optional 8-bit sounds for interactions
 
@@ -259,11 +266,7 @@ Already implemented from v1:
 
 ### Installed
 - VT323 font (Google Fonts CDN)
-
-### To Install
-```bash
-npm install html2canvas  # For share-as-image feature
-```
+- html2canvas (for share-as-image feature) ✅
 
 ---
 

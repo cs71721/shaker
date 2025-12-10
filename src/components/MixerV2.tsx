@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import html2canvas from 'html2canvas';
 
 // ============================================================================
 // DATA
@@ -121,8 +122,29 @@ const voiceDescriptions: Record<string, string> = {
   stranger: "texting a stranger - polite, explaining context, getting to the point"
 };
 
+// Rotating placeholder prompts for input
+const placeholderPrompts = [
+  "tell them you're running late...",
+  "cancel plans without being weird...",
+  "apologize but like, not too much...",
+  "ask to hang without sounding desperate...",
+  "respond to 'we need to talk'...",
+  "say happy birthday but make it funny...",
+  "tell mom you'll be home late...",
+  "react to their story...",
+  "text back after leaving them on read...",
+  "confess you forgot their name...",
+  "ask for the homework...",
+  "explain why you ghosted...",
+  "say thanks but make it not boring...",
+  "decline the invite nicely...",
+  "ask if they're mad at you...",
+  "start a convo with your crush...",
+];
+
 // Contextual verbs for loading animation
 const ingredientVerbs: Record<string, string[]> = {
+  // Vibes
   chill: ['chilling', 'vibing', 'relaxing', 'lounging'],
   bold: ['asserting', 'declaring', 'commanding'],
   spicy: ['spicing', 'heating', 'sizzling', 'burning'],
@@ -139,11 +161,108 @@ const ingredientVerbs: Record<string, string[]> = {
   petty: ['shading', 'side-eyeing', 'noting'],
   unhinged: ['unraveling', 'feral-posting', 'chaos-channeling'],
   cozy: ['cozy-ing', 'snuggling', 'wrapping'],
+  // Characters
   wednesday: ['brooding', 'plotting', 'deadpanning'],
+  peeta: ['baking', 'bread-making', 'pining'],
+  hermione: ['researching', 'studying', 'wand-waving'],
   yoda: ['meditating', 'levitating', 'backwards-speaking'],
+  deadpool: ['fourth-wall-breaking', 'regenerating', 'quipping'],
+  elsa: ['letting-it-go', 'freezing', 'thawing'],
+  shrek: ['onion-layering', 'swamp-dwelling', 'ogre-ing'],
+  taylor: ['eras-touring', 'songwriting', 're-recording'],
+  gandalf: ['wizard-ing', 'shall-not-passing', 'pipe-smoking'],
+  dracula: ['blood-thirsting', 'cape-swirling', 'bat-transforming'],
+  jesus: ['blessing', 'forgiving', 'miracle-working'],
+  batman: ['brooding', 'justice-ing', 'graveling'],
+  carson: ['butlering', 'disapproving', 'silver-polishing'],
+  dowager: ['judging', 'quipping', 'eyebrow-raising'],
+  mary: ['ice-queening', 'devastating', 'composing'],
+  spongebob: ['jellyfishing', 'flipping', 'ready-ing'],
+  stitch: ['ohana-ing', 'destroying', 'adorable-ing'],
+  moana: ['wayfinding', 'ocean-calling', 'restoring'],
+  bruno: ['prophesying', 'hiding', 'we-dont-talking'],
+  barbie: ['pink-ing', 'dreaming', 'encouraging'],
+  ken: ['kenough-ing', 'beach-ing', 'himbo-ing'],
+  gru: ['villain-ing', 'minion-dadding', 'soft-hearting'],
+  katniss: ['volunteering', 'surviving', 'arrow-notching'],
+  // Brooklyn 99
+  jake: ['cool-cool-cooling', 'detecting', 'die-hard-quoting'],
+  amy: ['binder-organizing', 'rule-following', 'nervous-rambling'],
+  holt: ['deadpanning', 'formal-speaking', 'corgis-loving'],
+  rosa: ['intimidating', 'mysterious-ing', 'knife-throwing'],
+  charles: ['foodie-ing', 'nikolaj-correcting', 'jake-supporting'],
+  gina: ['dance-reigning', 'self-crowning', 'peasant-judging'],
+  terry: ['terry-ing', 'yogurt-loving', 'dad-protecting'],
+  hitchcock: ['snacking', 'gross-ing', 'oversharing'],
+  scully: ['wholesome-ing', 'kelly-mentioning', 'naive-ing'],
+  kevin: ['academia-ing', 'sophisticated-ing', 'dry-witting'],
+  dougjudy: ['crooning', 'escaping', 'rosa-serenading'],
+  pimento: ['paranoid-ing', 'feral-ing', 'intensity-ing'],
+  // Modern Family
+  phil: ['dad-joking', 'cool-dadding', 'trampolining'],
+  gloria: ['colombian-ing', 'yelling', 'fierce-loving'],
+  claire: ['controlling', 'wine-momming', 'stressed-ing'],
+  luke: ['clueless-ing', 'accidentally-wising', 'couch-ing'],
+  mitch: ['overthinking', 'gasping', 'neurotic-ing'],
+  cam: ['theatrical-ing', 'clowning', 'football-referencing'],
+  jay: ['grumpy-oldmanning', 'tough-loving', 'closet-selling'],
+  haley: ['influencing', 'selfie-ing', 'shopping'],
+  alex: ['genius-ing', 'condescending', 'underappreciated-ing'],
+  manny: ['romancing', 'poetry-ing', 'espresso-ing'],
+  lily: ['savage-ing', 'deadpan-childing', 'eye-rolling'],
+  dylan: ['himbo-ing', 'guitar-strumming', 'wholesome-ing'],
+  // Shakespeare
+  romeo: ['swooning', 'balcony-climbing', 'dramatic-loving'],
+  juliet: ['star-crossing', 'defying', 'potion-drinking'],
+  hamlet: ['soliloquizing', 'to-be-or-not-being', 'avenging'],
+  ladymacbeth: ['scheming', 'spot-damning', 'ambition-ing'],
+  puck: ['mischief-making', 'fool-mocking', 'forest-flying'],
+  mercutio: ['punning', 'queen-mab-ing', 'plague-cursing'],
+  ophelia: ['flower-gathering', 'tragic-ing', 'mad-singing'],
+  macbeth: ['dagger-seeing', 'tyrant-ing', 'prophecy-fearing'],
+  falstaff: ['feasting', 'tavern-ing', 'coward-ing'],
+  beatrice: ['verbal-sparring', 'wit-sharpening', 'disdaining'],
+  benedick: ['bachelor-ing', 'bantering', 'eavesdropping'],
+  bottom: ['acting', 'ass-transforming', 'dream-weaving'],
+  // Christmas
   santa: ['ho-ho-hoing', 'gift-wrapping', 'list-checking'],
   grinch: ['grumbling', 'scheming', 'heart-growing'],
-  // Add more as needed...
+  buddyelf: ['singing', 'syrup-pouring', 'santa-screaming'],
+  scrooge: ['humbug-ing', 'ghost-touring', 'reforming'],
+  kevinmccallister: ['trap-setting', 'aftershave-screaming', 'home-defending'],
+  rudolph: ['nose-glowing', 'misfit-befriending', 'fog-guiding'],
+  jackskellington: ['whats-this-ing', 'pumpkin-kinging', 'christmas-discovering'],
+  clarkgriswold: ['light-stringing', 'rant-ing', 'griswold-ing'],
+  frosty: ['happy-birthday-ing', 'magic-hatting', 'melt-worrying'],
+  cindylou: ['questioning', 'innocenting', 'heart-having'],
+  snowmiser: ['freezing', 'sibling-rivaling', 'fabulous-ing'],
+  ralphie: ['bb-gun-wanting', 'decoder-ring-ing', 'leg-lamp-admiring'],
+  // Texting contexts
+  bestie: ['unfiltering', 'chaos-sharing', 'tea-spilling'],
+  groupchat: ['performing', 'meme-dropping', 'laughing'],
+  sibling: ['roasting', 'annoying', 'love-hating'],
+  mom: ['reassuring', 'patient-explaining', 'emoji-teaching'],
+  dad: ['thumbs-upping', 'dad-joking', 'proud-dadding'],
+  parents: ['updating', 'wholesome-ing', 'loop-keeping'],
+  grandparent: ['CAPS-LOCKING', 'love-sharing', 'slow-typing'],
+  teacher: ['respecting', 'help-asking', 'deadline-extending'],
+  coach: ['committing', 'respecting', 'brief-ing'],
+  gamingbuddy: ['trash-talking', 'lobby-queueing', 'rage-quitting'],
+  onlinefriend: ['meme-fluenting', 'parasocial-comforting', 'very-online-ing'],
+  friendupset: ['apologizing', 'careful-wording', 'fix-attempting'],
+  upsetfriend: ['eggshell-walking', 'defensive-caring', 'space-giving'],
+  friendmadatyou: ['calm-staying', 'disappointed-addressing', 'boundary-setting'],
+  acquaintance: ['polite-distancing', 'small-talking', 'professional-friendly-ing'],
+  someoneNew: ['friendly-curious-ing', 'common-ground-finding', 'cool-playing'],
+  leftonread: ['unbothered-acting', 'second-guessing', 'desperate-hiding'],
+  roommate: ['logistic-ing', 'passive-aggressive-noting', 'casual-texting'],
+  kids: ['encouraging', 'age-appropriate-ing', 'fun-parenting'],
+  boss: ['professional-but-not-stiff-ing', 'competent-ing', 'clear-communicating'],
+  stranger: ['polite-contextualizing', 'point-getting', 'brief-explaining'],
+  newcrush: ['flirty-nervous-ing', 'cool-trying', 'overthinking'],
+  situationship: ['casual-loaded-ing', 'reading-into-everything', 'cool-playing'],
+  partner: ['comfortable-weird-ing', 'real-being', 'loving'],
+  ex: ['guarded-subtexting', 'emotionally-complex-ing', 'cool-playing'],
 };
 
 interface Ingredient {
@@ -610,8 +729,12 @@ export default function MixerV2() {
   const [cardsVisible, setCardsVisible] = useState(true);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [autocompleteIndex, setAutocompleteIndex] = useState(0);
+  const [placeholder] = useState(() =>
+    placeholderPrompts[Math.floor(Math.random() * placeholderPrompts.length)]
+  );
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const resultCardRef = useRef<HTMLDivElement>(null);
 
   // Parse current input for hashtags
   const { message, validIngredients } = parseHashtags(inputText);
@@ -764,21 +887,33 @@ export default function MixerV2() {
     const styles = validIngredients.filter(i => i.section !== 'texting');
     const styleList = styles.map(i => voiceDescriptions[i.id]).join(' + ');
 
-    const prompt = `Write 5 versions of a text message at different lengths.
+    const prompt = `You're a genius at writing text messages that are funny, unexpected, and sound like real teens texting. Write 5 versions of a text at different lengths.
 
 What to say: "${message}"${textingContext ? `
 Texting: ${voiceDescriptions[textingContext.id]}` : ''}${styles.length > 0 ? `
 Style: ${styleList}` : ''}
 
-Output valid JSON with exactly this format:
-{"tiny":"5-8 words max","short":"10-15 words","medium":"20-30 words","long":"40-50 words","xl":"60-80 words"}
+EXAMPLES OF GREAT OUTPUTS:
 
-Rules for ALL versions:
-- Lowercase is fine, abbreviations ok (u, rn, ngl, lol)
-- No hashtags, no emojis unless natural
-- Sound like real texts, not scripts
-- Be creative and funny
-- Each version should feel complete, not cut off`;
+Example 1 - "apologize for being late" with #chill #bestie:
+{"tiny":"my bad lol omw","short":"ok so i'm late but like in my defense time is fake","medium":"ngl i lost track of time but i'm literally leaving rn, save me a seat and pretend i've been there the whole time","long":"ok so hear me out. i was ABOUT to leave on time but then i got distracted and now i'm running like 15 min late. this is so on brand for me honestly. start without me i'll slide in like nothing happened","xl":"bestie i need you to act normal when i walk in late because i'm going to pretend i've been there the whole time. i genuinely don't know what happened to the last hour but i'm leaving NOW. also if anyone asks i was stuck in traffic even though i live 5 mins away. cover for me and i'll buy you food later"}
+
+Example 2 - "say happy birthday" with #spicy #dramatic:
+{"tiny":"SCREAM it's ur day","short":"happy birthday to the only person who matters (me at ur party)","medium":"HAPPY BIRTHDAY honestly can't believe you're aging while i stay exactly the same. anyway this is your day so i guess i'll let you have the spotlight for once","long":"HAPPY BIRTHDAY to someone who is FINALLY catching up to my level of wisdom and maturity. jk you'll never reach this but i admire the effort. seriously though have the best day, you deserve all the chaos and cake","xl":"okay so today is YOUR day which is honestly so weird because usually every day is about me but fine i'll let you have this one. HAPPY BIRTHDAY you absolute icon. i hope you get everything you want and more, and if you don't, i'll simply cause a scene until you do. that's my gift to you. love you forever even when you're old and crusty"}
+
+VOCAB YOU CAN USE: ngl, lowkey, highkey, fr fr, no cap, slay, its giving, understood the assignment, main character, ate that, rent free, living in my head, its the ___ for me, not me doing ___, im deceased, help, screaming, crying, throwing up, real, valid, based, unhinged, feral, bestie, girlie, bestie, bruh, pls, rn, omw, wyd, idk, tbh, imo, lowkey obsessed, the way i ___, me when ___, not you ___, literally same, felt that, big mood, vibe check, the audacity, how dare, ur honor
+
+RULES:
+- Sound like actual texts teens send, not AI writing
+- Be creative and surprising - avoid obvious/boring responses
+- Humor > formal correctness
+- Lowercase is natural, abbreviations encouraged
+- Each version should feel complete and different, not just longer
+- Capture the ENERGY of the style, not just the words
+- Make it something they'd actually screenshot and share
+
+Output valid JSON only:
+{"tiny":"5-8 words","short":"10-15 words","medium":"20-30 words","long":"40-50 words","xl":"60-80 words"}`;
 
     try {
       const response = await fetch('/api/generate', {
@@ -831,6 +966,53 @@ Rules for ALL versions:
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {}
+  };
+
+  const shareAsImage = async () => {
+    if (!resultCardRef.current) return;
+
+    haptic(50);
+
+    try {
+      // Capture the result card as canvas
+      const canvas = await html2canvas(resultCardRef.current, {
+        backgroundColor: '#000',
+        scale: 2, // Higher quality
+        useCORS: true,
+        logging: false,
+      });
+
+      // Convert to blob
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(resolve, 'image/png');
+      });
+
+      if (!blob) return;
+
+      // Create file for sharing
+      const file = new File([blob], 'shaker-message.png', { type: 'image/png' });
+
+      // Check if Web Share API is available with files
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Shaker Message',
+          text: currentResult,
+        });
+      } else {
+        // Fallback: download the image
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'shaker-message.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Share failed:', error);
+    }
   };
 
   const closeResult = () => {
@@ -955,7 +1137,7 @@ Rules for ALL versions:
             onKeyDown={handleKeyDown}
             onSelect={handleSelect}
             onClick={handleSelect}
-            placeholder="what do you need to say?&#10;#chill #wednesday"
+            placeholder={placeholder}
             rows={1}
             disabled={isLoading}
             style={{
@@ -1064,6 +1246,7 @@ Rules for ALL versions:
               // Result Card
               <>
                 <div
+                  ref={resultCardRef}
                   onClick={copyResult}
                   style={{
                     width: '100%',
@@ -1157,7 +1340,7 @@ Rules for ALL versions:
                 {/* Action buttons */}
                 <div style={{ display: 'flex', gap: 32 }}>
                   <button
-                    onClick={() => {/* TODO: share */}}
+                    onClick={shareAsImage}
                     style={{
                       background: 'none',
                       border: 'none',
@@ -1168,6 +1351,19 @@ Rules for ALL versions:
                     }}
                   >
                     share
+                  </button>
+                  <button
+                    onClick={doShake}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#fff',
+                      fontSize: 12,
+                      cursor: 'pointer',
+                      fontFamily: "'VT323', monospace",
+                    }}
+                  >
+                    remix
                   </button>
                   <button
                     onClick={() => {/* TODO: like */}}
