@@ -589,9 +589,9 @@ function PixelCard({
   size?: 'sm' | 'md' | 'lg';
 }) {
   const sizes = {
-    sm: { width: 60, height: 84, fontSize: 24, textSize: 11 },
-    md: { width: 80, height: 112, fontSize: 32, textSize: 13 },
-    lg: { width: 110, height: 154, fontSize: 44, textSize: 15 },
+    sm: { width: 66, height: 92, fontSize: 26, textSize: 11 },
+    md: { width: 88, height: 123, fontSize: 36, textSize: 13 },
+    lg: { width: 120, height: 168, fontSize: 48, textSize: 15 },
   };
 
   const s = sizes[size];
@@ -663,12 +663,12 @@ function CardRow({
   selectedIds: string[];
 }) {
   return (
-    <div style={{ marginBottom: 16 }}>
+    <div className="card-row" style={{ marginBottom: 12, opacity: 0 }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
         gap: 8,
-        marginBottom: 8,
+        marginBottom: 6,
         paddingLeft: 4,
       }}>
         <span style={{
@@ -1092,6 +1092,31 @@ Output valid JSON only:
         }}
         className="hide-scrollbar"
       >
+        {/* Header */}
+        <div className="card-row" style={{
+          textAlign: 'center',
+          marginBottom: 20,
+          paddingTop: 8,
+          opacity: 0,
+        }}>
+          <h1 style={{
+            fontSize: 32,
+            fontWeight: 'normal',
+            margin: 0,
+            letterSpacing: 4,
+            color: '#fff',
+          }}>
+            SHAKER
+          </h1>
+          <p style={{
+            fontSize: 14,
+            color: '#555',
+            margin: '6px 0 0 0',
+          }}>
+            pick a vibe + who you're texting →
+          </p>
+        </div>
+
         {recentIngredients.length > 0 && (
           <CardRow title="recent" items={recentIngredients} onCardClick={handleCardClick} selectedIds={selectedIds} />
         )}
@@ -1534,6 +1559,31 @@ Output valid JSON only:
         textarea::placeholder {
           color: #444;
         }
+
+        @keyframes fadeSlideIn {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .card-row {
+          animation: fadeSlideIn 0.4s ease-out forwards;
+        }
+
+        .card-row:nth-child(1) { animation-delay: 0s; }
+        .card-row:nth-child(2) { animation-delay: 0.05s; }
+        .card-row:nth-child(3) { animation-delay: 0.1s; }
+        .card-row:nth-child(4) { animation-delay: 0.15s; }
+        .card-row:nth-child(5) { animation-delay: 0.2s; }
+        .card-row:nth-child(6) { animation-delay: 0.25s; }
+        .card-row:nth-child(7) { animation-delay: 0.3s; }
+        .card-row:nth-child(8) { animation-delay: 0.35s; }
+        .card-row:nth-child(9) { animation-delay: 0.4s; }
       `}</style>
     </div>
   );
